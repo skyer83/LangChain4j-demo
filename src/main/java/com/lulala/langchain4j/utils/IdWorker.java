@@ -9,6 +9,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * 滴滴 TinyId 号段模式：预分配号段 [start, end]，用完切换下一段
  * 美团 Leaf-Snowflake：标准 64 位雪花算法，含时钟回拨保护
  * </pre>
+ * 只是想在一个 Spring Boot 单体应用中生成 ID，直接用项目里这份手写的 IdWorker 就够可以了，
+ * 后续服务多实例需要协调 workerId，再考虑引入：
+ * <pre>
+ * 滴滴 TinyId 号段模式：https://github.com/didi/tinyid
+ * 美团 Leaf-Snowflake：https://github.com/Meituan-Dianping/Leaf
+ * </pre>
  *
  * @author shenjh
  * @version 1.0
@@ -68,22 +74,27 @@ public class IdWorker {
                 // 号段用完，尝试切换
                 lock.lock();
                 try {
-                    // 双重检查
+                    // 双重检查：确认号段确实耗尽（可能已被其他线程切换）
                     if (cursor.get() > currentEnd) {
                         // 如果有预加载的下一段，直接切换
                         if (nextStart != -1) {
-                            currentStart = nextStart;
-                            currentEnd = nextEnd;
-                            cursor.set(currentStart);
+                            // 注意：先保存再清空，避免 preloadNextSegment() 并发覆盖
+                            long ns = nextStart;
+                            long ne = nextEnd;
                             nextStart = -1;
                             nextEnd = -1;
+                            currentStart = ns;
+                            currentEnd = ne;
+                            // 不调用 cursor.set()：号段耗尽时 cursor 已自增到 currentEnd+1，
+                            // 而预加载的 nextStart 理应 == currentEnd+1，cursor 已在正确位置。
+                            // 若用 set() 回退 cursor，会与锁外已取走 ID 的线程产生重复。
                         } else {
                             // 没有预加载，同步生成新号段（模拟 DB 拉取）
                             long newStart = currentEnd + 1;
                             long newEnd = newStart + step - 1;
                             currentStart = newStart;
                             currentEnd = newEnd;
-                            cursor.set(newStart);
+                            // 同样不调用 cursor.set()，理由同上
                         }
                     }
                 } finally {
@@ -94,10 +105,19 @@ public class IdWorker {
 
         /**
          * 预加载下一号段（模拟异步从 DB 拉取，实际应放在定时任务或回调中调用）
+         * <p>
+         * 注意：通过加锁保证与 {@link #nextId()} 切换号段时的可见性和原子性，
+         * 防止 nextStart/nextEnd 被读到不配对的值。
+         * </p>
          */
         public void preloadNextSegment(long start, long end) {
-            this.nextStart = start;
-            this.nextEnd = end;
+            lock.lock();
+            try {
+                this.nextStart = start;
+                this.nextEnd = end;
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -201,6 +221,13 @@ public class IdWorker {
         private long waitNextMillis(long lastTimestamp) {
             long timestamp = System.currentTimeMillis();
             while (timestamp <= lastTimestamp) {
+                // 短暂让出 CPU，避免忙等消耗
+                try {
+                    Thread.sleep(0, 500_000); // 0.5ms
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
                 timestamp = System.currentTimeMillis();
             }
             return timestamp;
@@ -239,7 +266,9 @@ public class IdWorker {
     }
 
     public static void main(String[] args) {
+        // didi: 1
         System.out.println("didi: " + nextDidiId());
+        // meituan: 57479593916895232
         System.out.println("meituan: " + nextMeituanId());
     }
 }
