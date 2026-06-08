@@ -61,6 +61,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!--
+                修复 GHSA-72hv-8253-57qq: jackson-core 非阻塞解析器 DoS 漏洞, 强制升级至 2.21.2。
+                解决 langchain4j-open-ai-spring-boot-starter 依赖 jackson-core 2.18.3 而存在 GHSA-72hv-8253-57qq 漏洞的问题
+            -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.21.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
