@@ -16,14 +16,13 @@
         <spring.boot3.version>3.5.14</spring.boot3.version>
         <dev.langchain4j>1.4.1</dev.langchain4j>
         <dev.langchain4j.spring>1.14.1-beta24</dev.langchain4j.spring>
-
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -39,6 +38,17 @@
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
             <version>${dev.langchain4j.spring}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -64,6 +74,8 @@
                     <source>21</source>
                     <target>21</target>
                     <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                    <executable>C:\devTool\java\java64\jdk-21.0.6\bin\javac</executable>
                 </configuration>
             </plugin>
             <plugin>

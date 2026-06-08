@@ -6,6 +6,7 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
+ * 参见：https://langchain4j.cn/tutorials/spring-boot-integration.html#spring-boot-starters
  * @author shenjh
  * @version 1.0
  * @since 2026/6/8 10:32
@@ -26,7 +28,8 @@ public class ChatController {
     private final ChatModel chatModel;
     private final StreamingChatModel streamingChatModel;
 
-    public ChatController(ChatModel chatModel, StreamingChatModel streamingChatModel) {
+    public ChatController(@Qualifier("openAiChatModel") ChatModel chatModel,
+                          StreamingChatModel streamingChatModel) {
         this.chatModel = chatModel;
         this.streamingChatModel = streamingChatModel;
     }
