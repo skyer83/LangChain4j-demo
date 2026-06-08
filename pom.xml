@@ -14,7 +14,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.boot3.version>3.5.14</spring.boot3.version>
-        <dev.langchain4j>1.4.1</dev.langchain4j>
         <dev.langchain4j.spring>1.14.1-beta24</dev.langchain4j.spring>
     </properties>
 
