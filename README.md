@@ -9,3 +9,8 @@
 > 编译版本：17
 >
 > 
+
+## LangChain4j Examples
+
+参见：https://github.com/langchain4j/langchain4j-examples
+

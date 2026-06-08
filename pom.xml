@@ -44,6 +44,12 @@
             <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
+        <!-- 使用 Flux -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-reactor</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

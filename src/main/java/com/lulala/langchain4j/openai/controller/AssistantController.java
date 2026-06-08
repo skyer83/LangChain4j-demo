@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 /**
  * @author shenjh
@@ -28,6 +29,11 @@ public class AssistantController {
     @GetMapping("/chat")
     public String chat(@RequestParam(value = "message") String message) {
         return aiAssistant.chat(message);
+    }
+
+    @GetMapping("/chatFlux")
+    public Flux<String> chatFlux(@RequestParam(value = "message") String message) {
+        return aiAssistant.chatFlux(message);
     }
 
     @GetMapping("/chat4OpenAi")
