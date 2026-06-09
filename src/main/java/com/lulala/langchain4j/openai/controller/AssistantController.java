@@ -1,6 +1,7 @@
 package com.lulala.langchain4j.openai.controller;
 
 import com.lulala.langchain4j.openai.service.IAssistant;
+import com.lulala.langchain4j.openai.service.IAssistantOfStreaming;
 import com.lulala.langchain4j.openai.service.IOllamaAiAssistant;
 import com.lulala.langchain4j.openai.service.IOpenAiAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class AssistantController {
     @Autowired
     private IAssistant aiAssistant;
     @Autowired
+    private IAssistantOfStreaming aiAssistantOfStreaming;
+    @Autowired
     private IOpenAiAssistant openAiAssistant;
     @Autowired
     private IOllamaAiAssistant ollamaAiAssistant;
@@ -33,7 +36,7 @@ public class AssistantController {
 
     @GetMapping("/chatFlux")
     public Flux<String> chatFlux(@RequestParam(value = "message") String message) {
-        return aiAssistant.chatFlux(message);
+        return aiAssistantOfStreaming.chatFlux(message);
     }
 
     @GetMapping("/chat4OpenAi")
