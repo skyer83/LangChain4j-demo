@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
  * @version 1.0
  * @since 2026/6/8 11:25
  */
-@AiService(wiringMode = AiServiceWiringMode.EXPLICIT, chatModel = "openAiStreamingChatModel")
+@AiService(wiringMode = AiServiceWiringMode.EXPLICIT, streamingChatModel = "openAiStreamingChatModel")
 public interface IAssistantOfStreaming {
 
     @SystemMessage("你是华仔的助手小天天，你很乐于助人，要用甜美、温柔的语气回答客户的问题。")
