@@ -25,6 +25,17 @@ public class ChatController {
 
     private static final Logger log = LoggerFactory.getLogger(ChatController.class);
 
+    /**
+     * 参见：https://langchain4j.cn/tutorials/chat-and-language-models.html
+     * <pre>
+     *  LanguageModel —— 该模型接收一个 String 作为输入，并返回一个 String 作为输出。
+     *  ChatModel —— 该模型接收多个 ChatMessage 作为输入，并返回一个单一的 AiMessage 作为输出。
+     *  EmbeddingModel —— 该模型可以将文本转换为 Embedding。
+     *  ImageModel —— 该模型可以生成和编辑 Image。
+     *  ModerationModel —— 该模型可以检查文本是否包含有害内容。
+     *  ScoringModel —— 该模型可以针对查询对多段文本进行打分（或排序），
+     * </pre>
+     */
     private final ChatModel chatModel;
     private final StreamingChatModel streamingChatModel;
 
