@@ -1,8 +1,6 @@
 package com.lulala.langchain4j.agents.controller;
 
-import com.lulala.langchain4j.agents.service.AudienceEditor;
-import com.lulala.langchain4j.agents.service.CreativeWriter;
-import com.lulala.langchain4j.agents.service.StyleEditor;
+import com.lulala.langchain4j.agents.service.*;
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.agentic.UntypedAgent;
 import dev.langchain4j.model.chat.ChatModel;
@@ -33,7 +31,7 @@ public class NovelCreatorController {
     public String createNovel() {
         CreativeWriter creativeWriter = AgenticServices
                 .agentBuilder(CreativeWriter.class)
-                .chatModel(gptChatModel)
+                .chatModel(openAiChatModel)
                 .outputKey("story")
                 .build();
 
@@ -45,7 +43,7 @@ public class NovelCreatorController {
 
         StyleEditor styleEditor = AgenticServices
                 .agentBuilder(StyleEditor.class)
-                .chatModel(openAiChatModel)
+                .chatModel(gptChatModel)
                 .outputKey("story")
                 .build();
 
@@ -60,8 +58,40 @@ public class NovelCreatorController {
                 "style", "fantasy",
                 "audience", "young adults"
         );
+        return (String) novelCreator.invoke(input);
+    }
 
-        String story = (String) novelCreator.invoke(input);
-        return story;
+    @GetMapping("/createNovelZh")
+    public String createNovelZh() {
+        CreativeWriterZh creativeWriterZh = AgenticServices
+                .agentBuilder(CreativeWriterZh.class)
+                .chatModel(openAiChatModel)
+                .outputKey("story")
+                .build();
+
+        AudienceEditorZh audienceEditorZh = AgenticServices
+                .agentBuilder(AudienceEditorZh.class)
+                .chatModel(openAiChatModel)
+                .outputKey("story")
+                .build();
+
+        StyleEditorZh styleEditorZh = AgenticServices
+                .agentBuilder(StyleEditorZh.class)
+                .chatModel(gptChatModel)
+                .outputKey("story")
+                .build();
+
+        UntypedAgent novelCreator = AgenticServices
+                .sequenceBuilder()
+                .subAgents(creativeWriterZh, audienceEditorZh, styleEditorZh)
+                .outputKey("story")
+                .build();
+
+        Map<String, Object> input = Map.of(
+                "topic", "龙与法师",
+                "style", "奇幻",
+                "audience", "年轻人"
+        );
+        return (String) novelCreator.invoke(input);
     }
 }
