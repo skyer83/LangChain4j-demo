@@ -1,4 +1,4 @@
-package com.lulala.langchain4j.agents.service;
+package com.lulala.langchain4j.agentic.service;
 
 import dev.langchain4j.agentic.Agent;
 import dev.langchain4j.service.UserMessage;

@@ -1,6 +1,6 @@
-package com.lulala.langchain4j.agents.service;
+package com.lulala.langchain4j.agentic.service;
 
-import com.lulala.langchain4j.agents.spring.AgenticAiService;
+import com.lulala.langchain4j.agentic.spring.AgenticAiService;
 import com.lulala.langchain4j.openai.constant.LangChain4JConstants;
 import dev.langchain4j.agentic.Agent;
 import dev.langchain4j.service.UserMessage;

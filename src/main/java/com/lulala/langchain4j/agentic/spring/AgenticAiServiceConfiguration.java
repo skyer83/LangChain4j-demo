@@ -1,4 +1,4 @@
-package com.lulala.langchain4j.agents.spring;
+package com.lulala.langchain4j.agentic.spring;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;

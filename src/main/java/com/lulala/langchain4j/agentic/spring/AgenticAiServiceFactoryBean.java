@@ -1,4 +1,4 @@
-package com.lulala.langchain4j.agents.spring;
+package com.lulala.langchain4j.agentic.spring;
 
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.model.chat.ChatModel;

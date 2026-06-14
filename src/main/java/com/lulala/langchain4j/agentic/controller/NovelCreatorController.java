@@ -1,6 +1,6 @@
-package com.lulala.langchain4j.agents.controller;
+package com.lulala.langchain4j.agentic.controller;
 
-import com.lulala.langchain4j.agents.service.*;
+import com.lulala.langchain4j.agentic.service.*;
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.agentic.UntypedAgent;
 import dev.langchain4j.model.chat.ChatModel;
