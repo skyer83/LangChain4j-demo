@@ -95,9 +95,15 @@ public class MyChatModelListener implements ChatModelListener {
         System.out.println("tokenUsage.totalTokenCount=" + tokenUsage.totalTokenCount());
         if (tokenUsage instanceof OpenAiTokenUsage openAiTokenUsage) {
             // 缓存命中的输入 Token 数
-            System.out.println("openAiTokenUsage.inputTokensDetails.cachedTokens=" + openAiTokenUsage.inputTokensDetails().cachedTokens());
+            OpenAiTokenUsage.InputTokensDetails inputTokensDetails = openAiTokenUsage.inputTokensDetails();
+            if (inputTokensDetails != null) {
+                System.out.println("openAiTokenUsage.inputTokensDetails.cachedTokens=" + inputTokensDetails.cachedTokens());
+            }
             // 推理消耗的 Token 数
-            System.out.println("openAiTokenUsage.outputTokensDetails.reasoningTokens=" + openAiTokenUsage.outputTokensDetails().reasoningTokens());
+            OpenAiTokenUsage.OutputTokensDetails outputTokensDetails = openAiTokenUsage.outputTokensDetails();
+            if (outputTokensDetails != null) {
+                System.out.println("openAiTokenUsage.outputTokensDetails.reasoningTokens=" + outputTokensDetails.reasoningTokens());
+            }
         }
 
         ChatRequest chatRequest = responseContext.chatRequest();

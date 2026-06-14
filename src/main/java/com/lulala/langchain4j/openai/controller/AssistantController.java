@@ -2,6 +2,7 @@ package com.lulala.langchain4j.openai.controller;
 
 import com.lulala.langchain4j.openai.service.IAssistant;
 import com.lulala.langchain4j.openai.service.IAssistantOfStreaming;
+import com.lulala.langchain4j.openai.service.IGptAssistant;
 import com.lulala.langchain4j.openai.service.IOllamaAiAssistant;
 import com.lulala.langchain4j.openai.service.IOpenAiAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class AssistantController {
     private IAssistantOfStreaming aiAssistantOfStreaming;
     @Autowired
     private IOpenAiAssistant openAiAssistant;
+    @Autowired
+    private IGptAssistant gptAssistant;
     @Autowired
     private IOllamaAiAssistant ollamaAiAssistant;
 
@@ -75,5 +78,10 @@ public class AssistantController {
     @GetMapping("/chat4OllamaAi")
     public String chat4OllamaAi(@RequestParam(value = "message") String message) {
         return ollamaAiAssistant.chat(message);
+    }
+
+    @GetMapping("/chat4Gpt")
+    public String chat4Gpt(@RequestParam(value = "message") String message) {
+        return gptAssistant.chat(message);
     }
 }
