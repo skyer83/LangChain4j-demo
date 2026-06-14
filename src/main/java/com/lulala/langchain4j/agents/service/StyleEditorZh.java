@@ -1,5 +1,7 @@
 package com.lulala.langchain4j.agents.service;
 
+import com.lulala.langchain4j.agents.spring.AgenticAiService;
+import com.lulala.langchain4j.openai.constant.LangChain4JConstants;
 import dev.langchain4j.agentic.Agent;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
@@ -9,6 +11,7 @@ import dev.langchain4j.service.V;
  * @version 1.0
  * @since 2026/6/10 15:08
  */
+@AgenticAiService(chatModel = LangChain4JConstants.ChatModel.GPT_CHAT_MODEL)
 public interface StyleEditorZh {
 
     @UserMessage("""

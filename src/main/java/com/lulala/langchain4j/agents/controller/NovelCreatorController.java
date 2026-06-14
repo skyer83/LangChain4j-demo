@@ -26,6 +26,12 @@ public class NovelCreatorController {
     private ChatModel openAiChatModel;
     @Autowired
     private ChatModel gptChatModel;
+    @Autowired
+    private CreativeWriterZh creativeWriterZh;
+    @Autowired
+    private AudienceEditorZh audienceEditorZh;
+    @Autowired
+    private StyleEditorZh styleEditorZh;
 
     @GetMapping("/createNovel")
     public String createNovel() {
@@ -63,24 +69,6 @@ public class NovelCreatorController {
 
     @GetMapping("/createNovelZh")
     public String createNovelZh() {
-        CreativeWriterZh creativeWriterZh = AgenticServices
-                .agentBuilder(CreativeWriterZh.class)
-                .chatModel(openAiChatModel)
-                .outputKey("story")
-                .build();
-
-        AudienceEditorZh audienceEditorZh = AgenticServices
-                .agentBuilder(AudienceEditorZh.class)
-                .chatModel(openAiChatModel)
-                .outputKey("story")
-                .build();
-
-        StyleEditorZh styleEditorZh = AgenticServices
-                .agentBuilder(StyleEditorZh.class)
-                .chatModel(gptChatModel)
-                .outputKey("story")
-                .build();
-
         UntypedAgent novelCreator = AgenticServices
                 .sequenceBuilder()
                 .subAgents(creativeWriterZh, audienceEditorZh, styleEditorZh)
