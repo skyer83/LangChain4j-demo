@@ -49,16 +49,16 @@ public class EveningPlanParallelController {
                 .executor(Executors.newFixedThreadPool(2))
                 .outputKey("plans")
                 .output(agenticScope -> {
-                    List<String> movies = agenticScope.readState("moves", List.of());
+                    List<String> movies = agenticScope.readState("movies", List.of());
                     List<String> meals = agenticScope.readState("meals", List.of());
-                    List<EveningPlan> movesAndMeals = new ArrayList<>();
+                    List<EveningPlan> moviesAndMeals = new ArrayList<>();
                     for (int i = 0; i < movies.size(); i++) {
                         if (i >= meals.size()) {
                             break;
                         }
-                        movesAndMeals.add(new EveningPlan(movies.get(i), meals.get(i)));
+                        moviesAndMeals.add(new EveningPlan(movies.get(i), meals.get(i)));
                     }
-                    return movesAndMeals;
+                    return moviesAndMeals;
                 })
                 .build();
 
