@@ -22,7 +22,7 @@ public interface EveningPlannerAgent02 {
     @ParallelAgent(outputKey = "plans", subAgents = {
             FoodExpert02.class,
             MovieExpert02.class
-    })
+    }, description = "根据美食专家与电影专家推荐的餐点和电影，将它们组合成“浪漫之夜计划”")
     List<EveningPlan> plan(@V("mood") String mood);
 
     @ParallelExecutor

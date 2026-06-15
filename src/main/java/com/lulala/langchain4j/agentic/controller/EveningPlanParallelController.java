@@ -61,9 +61,7 @@ public class EveningPlanParallelController {
                     return moviesAndMeals;
                 })
                 .build();
-
-        List<EveningPlan> eveningPlanList = eveningPlannerAgent.plan("浪漫");
-        return eveningPlanList;
+        return eveningPlannerAgent.plan("浪漫");
     }
 
     @GetMapping("/eveningPlan02")
