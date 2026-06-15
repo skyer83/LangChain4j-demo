@@ -53,11 +53,17 @@ public class RequestCategoryConditionalController {
                 .chatModel(gptChatModel)
                 .outputKey("response")
                 .build();
+        UnknownExpert unknownExpert = AgenticServices
+                .agentBuilder(UnknownExpert.class)
+                .chatModel(gptChatModel)
+                .outputKey("response")
+                .build();
 
         UntypedAgent expertsAgent = AgenticServices.conditionalBuilder()
                 .subAgents(agenticScope -> agenticScope.readState("category", RequestCategory.UNKNOWN) == RequestCategory.MEDICAL, medicalExpert)
                 .subAgents(agenticScope -> agenticScope.readState("category", RequestCategory.UNKNOWN) == RequestCategory.LEGAL, legalExpert)
                 .subAgents(agenticScope -> agenticScope.readState("category", RequestCategory.UNKNOWN) == RequestCategory.TECHNICAL, technicalExpert)
+                .subAgents(agenticScope -> agenticScope.readState("category", RequestCategory.UNKNOWN) == RequestCategory.UNKNOWN, unknownExpert)
                 .build();
 
         ExpertRouterAgent expertRouterAgent = AgenticServices
@@ -67,6 +73,7 @@ public class RequestCategoryConditionalController {
                 .build();
 
 //        return expertRouterAgent.ask("我的腿摔断了（或者骨折了），我该怎么办？");
-        return expertRouterAgent.ask("浩东和小常离婚了，浩东该怎么办？");
+//        return expertRouterAgent.ask("浩东和小常离婚了，浩东该怎么办？");
+        return expertRouterAgent.ask("外星人真的存在吗？");
     }
 }
