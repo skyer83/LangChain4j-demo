@@ -4,16 +4,17 @@ import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.model.chat.ChatModel;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.StringUtils;
 
-public class AgenticAiServiceFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware {
+public class AgenticAiServiceFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware, InitializingBean {
 
     private Class<T> agentServiceClass;
     private String chatModelBeanName;
     private ApplicationContext applicationContext;
-    private T agent;
+    private volatile T agent;
 
     public void setAgentServiceClass(Class<T> agentServiceClass) {
         this.agentServiceClass = agentServiceClass;
@@ -29,13 +30,15 @@ public class AgenticAiServiceFactoryBean<T> implements FactoryBean<T>, Applicati
     }
 
     @Override
+    public void afterPropertiesSet() {
+        agent = AgenticServices
+                .agentBuilder(agentServiceClass)
+                .chatModel(chatModel())
+                .build();
+    }
+
+    @Override
     public T getObject() {
-        if (agent == null) {
-            agent = AgenticServices
-                    .agentBuilder(agentServiceClass)
-                    .chatModel(chatModel())
-                    .build();
-        }
         return agent;
     }
 
