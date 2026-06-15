@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/novelCreator")
-public class NovelCreatorController {
+public class NovelCreatorSequentialController {
 
     @Autowired
     private ChatModel openAiChatModel;
