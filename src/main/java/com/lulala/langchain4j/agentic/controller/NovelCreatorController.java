@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * 参见：https://langchain4j.cn/tutorials/agents.html<br/>
- * 创建小说
+ * 创建小说 - 循环工作流（Loop workflow）
  * @author shenjh
  * @version 1.0
  * @since 2026/6/14 16:53
