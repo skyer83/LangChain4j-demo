@@ -1,6 +1,6 @@
 package com.lulala.langchain4j.agentic.service;
 
-import com.lulala.langchain4j.agentic.domain.EveningPlan;
+import com.lulala.langchain4j.agentic.domain.vo.EveningPlan;
 import dev.langchain4j.agentic.declarative.Output;
 import dev.langchain4j.agentic.declarative.ParallelAgent;
 import dev.langchain4j.agentic.declarative.ParallelExecutor;

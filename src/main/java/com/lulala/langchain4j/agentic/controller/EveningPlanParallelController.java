@@ -1,6 +1,6 @@
 package com.lulala.langchain4j.agentic.controller;
 
-import com.lulala.langchain4j.agentic.domain.EveningPlan;
+import com.lulala.langchain4j.agentic.domain.vo.EveningPlan;
 import com.lulala.langchain4j.agentic.service.EveningPlannerAgent;
 import com.lulala.langchain4j.agentic.service.EveningPlannerAgent02;
 import com.lulala.langchain4j.agentic.service.FoodExpert;

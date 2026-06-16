@@ -1,4 +1,4 @@
-package com.lulala.langchain4j.agentic.domain;
+package com.lulala.langchain4j.agentic.domain.vo;
 
 /**
  * @author shenjh
