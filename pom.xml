@@ -49,6 +49,12 @@
             <artifactId>langchain4j-reactor</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
+        <!-- 多 Agent -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-agentic</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

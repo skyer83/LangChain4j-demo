@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class BookingServiceImpl implements IBookingService {
+
     @Override
     public Booking getBookingDetails(String bookingNumber, String customerName, String customerSurname) {
         return new Booking(IdWorker.nextDidiId(), bookingNumber, customerName, customerSurname);

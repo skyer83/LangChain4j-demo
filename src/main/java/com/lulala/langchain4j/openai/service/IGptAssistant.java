@@ -6,14 +6,16 @@ import dev.langchain4j.service.spring.AiService;
 import dev.langchain4j.service.spring.AiServiceWiringMode;
 
 /**
+ * GPT AI 助手
+ *
  * @author shenjh
  * @version 1.0
- * @since 2026/6/8 13:40
+ * @since 2026/6/14
  */
-@AiService(wiringMode = AiServiceWiringMode.EXPLICIT, chatModel = LangChain4JConstants.ChatModel.OLLAMA_CHAT_MODEL)
-public interface IOllamaAiAssistant {
+@AiService(wiringMode = AiServiceWiringMode.EXPLICIT, chatModel = LangChain4JConstants.ChatModel.GPT_CHAT_MODEL)
+public interface IGptAssistant {
 
-    @SystemMessage("你叫ollamaChatModel，是一个有礼貌的助手")
+    @SystemMessage("你是小小GPT，一个强大的AI助手")
     String chat(String userMessage);
 
 }
