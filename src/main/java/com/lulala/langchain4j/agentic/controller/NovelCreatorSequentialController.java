@@ -6,7 +6,10 @@ import com.lulala.langchain4j.agentic.service.CreativeWriter;
 import com.lulala.langchain4j.agentic.service.StyleEditor;
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.agentic.UntypedAgent;
+import dev.langchain4j.agentic.agent.ErrorRecoveryResult;
+import dev.langchain4j.agentic.agent.MissingArgumentException;
 import dev.langchain4j.model.chat.ChatModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 参见：https://langchain4j.cn/tutorials/agents.html<br/>
@@ -23,6 +27,7 @@ import java.util.Map;
  * @version 1.0
  * @since 2026/6/14 16:53
  */
+@Slf4j
 @RestController
 @RequestMapping("/novelCreator")
 public class NovelCreatorSequentialController {
@@ -82,5 +87,55 @@ public class NovelCreatorSequentialController {
                 "audience", audience
         );
         return (String) novelCreatorZh.invoke(input);
+    }
+
+    @GetMapping("/createNovelError")
+    public String createNovelError(@RequestParam(value = "topic", required = false) String topic,
+                                   @RequestParam("style") String style,
+                                   @RequestParam("audience") String audience) {
+        AtomicBoolean errorRecoveryCalled = new AtomicBoolean(false);
+
+        CreativeWriter creativeWriter = AgenticServices
+                .agentBuilder(CreativeWriter.class)
+                .chatModel(openAiChatModel)
+                .outputKey("story")
+                .build();
+
+        AudienceEditor audienceEditor = AgenticServices
+                .agentBuilder(AudienceEditor.class)
+                .chatModel(openAiChatModel)
+                .outputKey("story")
+                .build();
+
+        StyleEditor styleEditor = AgenticServices
+                .agentBuilder(StyleEditor.class)
+                .chatModel(gptChatModel)
+                .outputKey("story")
+                .build();
+
+        UntypedAgent novelCreator = AgenticServices
+                .sequenceBuilder()
+                .subAgents(creativeWriter, audienceEditor, styleEditor)
+                .errorHandler(errorContext -> {
+                    // 对应的方法名：CreativeWriter.generateStory
+                    log.info("errorContext.agentName: {}", errorContext.agentName());
+                    if (errorContext.agentName().equals("generateStory")
+                            && errorContext.exception() instanceof MissingArgumentException mEx
+                            && mEx.argumentName().equals("topic")) {
+                        errorContext.agenticScope().writeState("topic", "dragons and wizards");
+                        errorRecoveryCalled.set(true);
+                        return ErrorRecoveryResult.retry();
+                    }
+                    return ErrorRecoveryResult.throwException();
+                })
+                .outputKey("story")
+                .build();
+
+        Map<String, Object> input = Map.of(
+//                "topic", "dragons and wizards",
+                "style", style,
+                "audience", audience
+        );
+        return (String) novelCreator.invoke(input);
     }
 }

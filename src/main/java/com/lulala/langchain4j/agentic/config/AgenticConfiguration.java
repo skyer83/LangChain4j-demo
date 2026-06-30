@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class AgenticConfiguration {
 
     public static final String BEAN_NAME_NovelCreatorZh = "novelCreatorZh";
+
     @Bean(BEAN_NAME_NovelCreatorZh)
     UntypedAgent novelCreatorZh(ApplicationContext applicationContext) {
         // CreativeWriterZh、AudienceEditorZh、StyleEditorZh 在这边作为 subAgents 后，不能再被别的 workflow Bean 复用，否则会有并发问题
