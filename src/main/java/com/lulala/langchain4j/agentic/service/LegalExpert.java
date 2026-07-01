@@ -15,6 +15,6 @@ public interface LegalExpert {
         请从法律的角度分析以下用户请求，并提供尽可能最佳的解答。
         用户请求为：{{request}}。
         """)
-    @Agent("法律专家")
+    @Agent(value = "法律专家", outputKey = "response")
     String medical(@V("request") String request);
 }

@@ -17,6 +17,6 @@ public interface CategoryRouter {
         仅回复这四个词中的一个，不要包含任何其他内容。
         用户请求为：‘{{request}}’。
         """)
-    @Agent("对用户请求进行分类")
+    @Agent(value = "对用户请求进行分类", outputKey = "category")
     RequestCategory classify(@V("request") String request);
 }

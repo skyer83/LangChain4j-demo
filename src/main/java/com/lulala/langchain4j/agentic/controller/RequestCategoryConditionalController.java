@@ -76,4 +76,17 @@ public class RequestCategoryConditionalController {
 //        return expertRouterAgent.ask("浩东和小常离婚了，浩东该怎么办？");
         return expertRouterAgent.ask("外星人真的存在吗？");
     }
+
+    /**
+     * 声明式分类咨询
+     * @return java.lang.String
+     * @author shenjh
+     * @since 2026/6/15 11:58
+     */
+    @GetMapping("/ask02")
+    public String ask02() {
+//        String request = "我的腿摔断了（或者骨折了），我该怎么办？";
+        String request = "外星人真的存在吗？";
+        return AgenticServices.createAgenticSystem(ExpertRouterAgent02.class, gptChatModel).ask(request);
+    }
 }

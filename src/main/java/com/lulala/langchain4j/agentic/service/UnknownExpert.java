@@ -14,6 +14,6 @@ public interface UnknownExpert {
         你只要严格回答：对不起，我无法确认您的问题，请提供更详细的描述。
         不要回答别的内容。
         """)
-    @Agent
+    @Agent(value = "客服", outputKey = "response")
     String unknown();
 }

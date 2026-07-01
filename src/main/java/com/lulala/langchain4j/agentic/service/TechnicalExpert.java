@@ -15,6 +15,6 @@ public interface TechnicalExpert {
         请从技术的角度分析以下用户请求，并提供尽可能最佳的解答。
         用户请求为：{{request}}。
         """)
-    @Agent("技术专家")
+    @Agent(value = "技术专家", outputKey = "response")
     String medical(@V("request") String request);
 }

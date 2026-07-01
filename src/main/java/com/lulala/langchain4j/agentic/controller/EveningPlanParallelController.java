@@ -66,6 +66,7 @@ public class EveningPlanParallelController {
 
     @GetMapping("/eveningPlan02")
     public List<EveningPlan> eveningPlan02() {
+        // 声明式写法的限制：同一个 ChatModel 将会被隐式地用于创建所有子代理，因此在同一个工作流中无法混合使用不同聊天模型的代理。这是当前实现的一个限制，但在未来版本中是可以克服的。
         EveningPlannerAgent02 eveningPlannerAgent = AgenticServices
                 .createAgenticSystem(EveningPlannerAgent02.class, gptChatModel);
         return eveningPlannerAgent.plan("浪漫");
