@@ -1,6 +1,7 @@
 package com.lulala.langchain4j.agentic.service;
 
 import dev.langchain4j.agentic.Agent;
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
@@ -9,12 +10,12 @@ import dev.langchain4j.service.V;
  * @version 1.0
  * @since 2026/6/15 11:55
  */
-public interface TechnicalExpert {
+public interface TechnicalExpertWithMemory {
     @UserMessage("""
         你是一位技术专家。
         请从技术的角度分析以下用户请求，并提供尽可能最佳的解答。
         用户请求为：{{request}}。
         """)
     @Agent(value = "技术专家", outputKey = "response")
-    String technical(@V("request") String request);
+    String technical(@MemoryId String memoryId, @V("request") String request);
 }
