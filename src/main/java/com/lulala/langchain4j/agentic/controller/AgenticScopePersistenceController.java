@@ -58,8 +58,8 @@ public class AgenticScopePersistenceController {
      */
     @GetMapping("/ask")
     public Map<String, Object> ask(
-            @RequestParam(defaultValue = "demo-1") String memoryId,
-            @RequestParam(defaultValue = "我的腿摔断了，我该怎么办？") String request
+            @RequestParam(name = "memoryId", defaultValue = "demo-1") String memoryId,
+            @RequestParam(name = "request", defaultValue = "我的腿摔断了，我该怎么办？") String request
     ) {
         String response = expertRouterAgent.ask(memoryId, request);
 
@@ -74,7 +74,7 @@ public class AgenticScopePersistenceController {
      * 从根代理的 AgenticScopeAccess 读取内存注册表中的 AgenticScope。
      */
     @GetMapping("/scope")
-    public Map<String, Object> scope(@RequestParam(defaultValue = "demo-1") String memoryId) {
+    public Map<String, Object> scope(@RequestParam(name = "memoryId", defaultValue = "demo-1") String memoryId) {
         Map<String, Object> result = baseInfo(memoryId);
         result.put("scope", scopeInfo(memoryId));
         return result;
@@ -84,7 +84,7 @@ public class AgenticScopePersistenceController {
      * 从内存注册表驱逐指定 memoryId 的 AgenticScope。
      */
     @GetMapping("/evict")
-    public Map<String, Object> evict(@RequestParam(defaultValue = "demo-1") String memoryId) {
+    public Map<String, Object> evict(@RequestParam(name = "memoryId", defaultValue = "demo-1") String memoryId) {
         boolean evicted = expertRouterAgent.evictAgenticScope(memoryId);
 
         Map<String, Object> result = baseInfo(memoryId);
