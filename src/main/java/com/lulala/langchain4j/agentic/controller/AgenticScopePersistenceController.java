@@ -59,7 +59,7 @@ public class AgenticScopePersistenceController {
     @GetMapping("/ask")
     public Map<String, Object> ask(
             @RequestParam(name = "memoryId", defaultValue = "demo-1") String memoryId,
-            @RequestParam(name = "request", defaultValue = "我的腿摔断了，我该怎么办？") String request
+            @RequestParam(defaultValue = "我的腿摔断了，我该怎么办？") String request
     ) {
         String response = expertRouterAgent.ask(memoryId, request);
 

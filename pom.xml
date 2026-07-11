@@ -94,8 +94,7 @@
                     <source>21</source>
                     <target>21</target>
                     <encoding>UTF-8</encoding>
-                    <fork>true</fork>
-                    <executable>C:\devTool\java\java64\jdk-21.0.6\bin\javac</executable>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
