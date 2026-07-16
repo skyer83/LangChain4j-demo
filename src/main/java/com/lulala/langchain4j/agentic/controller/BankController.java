@@ -11,6 +11,7 @@ import dev.langchain4j.agentic.supervisor.SupervisorResponseStrategy;
 import dev.langchain4j.model.chat.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,39 +21,45 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  * @since 2026/7/15 16:55
  */
-@RestController("/bank")
+@RestController
+@RequestMapping("/bank")
 public class BankController {
 
     @Autowired
     private ChatModel gptChatModel;
+    @Autowired
+    private ChatModel ollamaChatModel;
 
     @GetMapping("/exchange")
     public String exchange() {
+        ChatModel chatModel = gptChatModel;
+//        ChatModel chatModel = ollamaChatModel;
+
         BankTool bankTool = new BankTool();
         bankTool.createAccount("张三", 1000.0);
         bankTool.createAccount("李四", 1000.0);
 
         WithdrawAgent withdrawAgent = AgenticServices
                 .agentBuilder(WithdrawAgent.class)
-                .chatModel(gptChatModel)
+                .chatModel(chatModel)
                 .tools(bankTool)
                 .build();
 
         CreditAgent creditAgent = AgenticServices
                 .agentBuilder(CreditAgent.class)
-                .chatModel(gptChatModel)
+                .chatModel(chatModel)
                 .tools(bankTool)
                 .build();
 
         ExchangeAgent exchangeAgent = AgenticServices
                 .agentBuilder(ExchangeAgent.class)
-                .chatModel(gptChatModel)
+                .chatModel(chatModel)
                 .tools(new ExchangeTool())
                 .build();
 
         SupervisorAgent supervisorAgent = AgenticServices
                 .supervisorBuilder()
-                .chatModel(gptChatModel)
+                .chatModel(chatModel)
                 .subAgents(withdrawAgent, creditAgent, exchangeAgent)
                 // SupervisorResponseStrategy.LAST，返回最后一个被调用子 agent 的输出，默认策略。
                 // SupervisorResponseStrategy.SUMMARY，返回 supervisor 对整个执行过程的总结。

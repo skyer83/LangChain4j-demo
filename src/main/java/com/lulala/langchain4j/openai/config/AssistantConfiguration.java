@@ -39,7 +39,16 @@ public class AssistantConfiguration {
     GptChatModelProperties gptChatModelProperties() {
         return new GptChatModelProperties();
     }
-
+    
+    /**
+     * 自定义调用的大模型
+     * @param httpClientBuilder
+     * @param properties
+     * @param chatModelListeners
+     * @return dev.langchain4j.model.chat.ChatModel 
+     * @author shenjh
+     * @since 2026/7/16 9:43
+     */
     @Bean(LangChain4JConstants.ChatModel.GPT_CHAT_MODEL)
     ChatModel gptChatModel(
             @Qualifier("openAiChatModelHttpClientBuilder") HttpClientBuilder httpClientBuilder,
@@ -56,6 +65,12 @@ public class AssistantConfiguration {
                 .build();
     }
 
+    /**
+     * 可参考 dev.langchain4j.openai.spring.ChatModelProperties 配置项进行配置
+     * @author shenjh
+     * @since 2026/7/16 11:04
+     * @version 1.0
+     */
     static class GptChatModelProperties {
         private String baseUrl;
         private String apiKey;
