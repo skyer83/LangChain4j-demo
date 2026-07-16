@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * 参见：https://langchain4j.cn/tutorials/agents.html<br/>
- * 纯代理式 AI
+ * 纯代理式 AI、非 AI 代理
  * @author shenjh
  * @version 1.0
  * @since 2026/7/15 16:55
