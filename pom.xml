@@ -55,6 +55,20 @@
             <artifactId>langchain4j-agentic</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
+        <!-- a2a 客户端 -->
+        <!-- LangChain4j Agentic A2A 集成 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-agentic-a2a</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+        <!-- a2a 服务端 -->
+        <!-- A2A Java SDK Server Common -->
+        <dependency>
+            <groupId>io.github.a2asdk</groupId>
+            <artifactId>a2a-java-sdk-server-common</artifactId>
+            <version>0.3.3.Final</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
