@@ -32,6 +32,8 @@ public class A2ANovelController {
         // 步骤 1: 创建远程 A2A 代理
         String A2A_SERVER_URL = "http://localhost:" + port;
         A2ACreativeWriter creativeWriter = AgenticServices
+                // 参见 io.a2a.client.http.A2ACardResolver，会先请求“域名 + 端口 + /.well-known/agent-card.json”获知对应 A2A 代理具备的能力
+                // 如：http://localhost:18081/.well-known/agent-card.json
                 .a2aBuilder(A2A_SERVER_URL, A2ACreativeWriter.class)
                 .outputKey("story")
                 .build();

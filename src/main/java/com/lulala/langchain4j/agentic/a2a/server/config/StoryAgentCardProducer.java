@@ -28,7 +28,7 @@ public class StoryAgentCardProducer {
                 .name("创意写作助手")
                 .description("根据主题创作富有想象力的短篇故事。支持中文和英文创作，故事结构完整，语言生动。")
                 // A2A 服务器地址
-                .url("http://localhost:" + port)
+                .url("http://localhost:" + port + "/a2a/server")
                 .version("1.0.0")
                 // 能力声明
                 .capabilities(new AgentCapabilities.Builder()
