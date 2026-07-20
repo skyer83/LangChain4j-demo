@@ -1,5 +1,6 @@
 package com.lulala.langchain4j.agentic.a2a.client.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.lulala.langchain4j.agentic.a2a.client.service.A2ACreativeWriter;
 import com.lulala.langchain4j.agentic.a2a.client.service.StorySupervisor;
 import com.lulala.langchain4j.agentic.a2a.client.service.StyleEditor;
@@ -69,11 +70,11 @@ public class A2ANovelController {
         System.out.println("─────────────────────────────");
 
         String finalStory = supervisor.createStyledStory(topic, style);
-        if ( !hasText(finalStory)) {
+        if (StrUtil.isBlank(finalStory)) {
             System.out.println("监督代理返回空内容，改为按顺序直接调用远程写作代理和本地风格编辑代理。");
             String story = creativeWriter.generateStory(topic);
-            finalStory = hasText(story) ? styleEditor.editStory(story, style) : story;
-            if (!hasText(finalStory)) {
+            finalStory = StrUtil.isNotBlank(story) ? styleEditor.editStory(story, style) : story;
+            if (StrUtil.isBlank(finalStory)) {
                 finalStory = story;
             }
         }
@@ -82,9 +83,5 @@ public class A2ANovelController {
         System.out.println("✅ 最终生成的故事:");
         System.out.println(finalStory);
         return finalStory;
-    }
-
-    private boolean hasText(String value) {
-        return value != null && !value.isBlank();
     }
 }

@@ -75,12 +75,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>cn.hutool</groupId>-->
-<!--            <artifactId>hutool-all</artifactId>-->
-<!--            <version>5.8.46</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.46</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
