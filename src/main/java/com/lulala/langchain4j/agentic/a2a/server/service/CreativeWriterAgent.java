@@ -4,6 +4,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,8 +34,9 @@ public class CreativeWriterAgent {
         @SystemMessage("""
                 你是一位富有想象力的故事作家。
                 根据用户给定的主题，创作一个结构完整、语言生动的短篇故事，约300字。
+                除了故事本身，不要返回任何其他内容。
                 """)
-        @UserMessage("主题：{topic}")
-        String writeStory(String topic);
+        @UserMessage("主题：{{topic}}")
+        String writeStory(@V("topic") String topic);
     }
 }

@@ -12,6 +12,6 @@ import dev.langchain4j.service.V;
  */
 public interface A2ACreativeWriter {
 
-    @Agent("根据主题生成创意故事")
+    @Agent(outputKey = "story", description = "根据主题生成创意故事")
     String generateStory(@V("topic") String topic);
 }

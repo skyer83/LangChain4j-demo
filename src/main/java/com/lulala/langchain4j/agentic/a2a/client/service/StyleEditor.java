@@ -1,6 +1,7 @@
 package com.lulala.langchain4j.agentic.a2a.client.service;
 
 import dev.langchain4j.agentic.Agent;
+import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 /**
@@ -11,6 +12,12 @@ import dev.langchain4j.service.V;
  */
 public interface StyleEditor {
 
-    @Agent("根据给定的风格编辑故事，使其更符合该风格")
+    @UserMessage("""
+            你是一位专业的故事编辑。
+            请分析并重写以下故事，使其更好地契合 {{style}} 风格。
+            除了改写后的故事本身，不要返回任何其他内容。
+            故事：{{story}}
+            """)
+    @Agent(outputKey = "story", description = "根据给定的风格编辑故事，使其更符合该风格")
     String editStory(@V("story") String story, @V("style") String style);
 }

@@ -11,6 +11,6 @@ import dev.langchain4j.service.V;
  */
 public interface StorySupervisor {
 
-    @Agent("根据主题和风格创作一个完整的故事")
+    @Agent("先调用远程创意写作代理根据 topic 生成故事，再调用风格编辑代理根据 style 改写故事，最后只返回改写后的故事")
     String createStyledStory(@V("topic") String topic, @V("style") String style);
 }

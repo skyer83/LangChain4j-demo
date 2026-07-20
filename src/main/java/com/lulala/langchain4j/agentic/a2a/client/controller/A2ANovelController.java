@@ -4,11 +4,13 @@ import com.lulala.langchain4j.agentic.a2a.client.service.A2ACreativeWriter;
 import com.lulala.langchain4j.agentic.a2a.client.service.StorySupervisor;
 import com.lulala.langchain4j.agentic.a2a.client.service.StyleEditor;
 import dev.langchain4j.agentic.AgenticServices;
+import dev.langchain4j.agentic.supervisor.SupervisorResponseStrategy;
 import dev.langchain4j.model.chat.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,7 +29,8 @@ public class A2ANovelController {
     private ChatModel gptChatModel;
 
     @GetMapping("/createNovel")
-    public String createNovel() {
+    public String createNovel(@RequestParam(value = "topic", defaultValue = "龙与魔法师的冒险") String topic,
+                              @RequestParam(value = "style", defaultValue = "喜剧") String style) {
 
         // 步骤 1: 创建远程 A2A 代理
         String A2A_SERVER_URL = "http://localhost:" + port;
@@ -49,23 +52,39 @@ public class A2ANovelController {
         StorySupervisor supervisor = AgenticServices
                 .supervisorBuilder(StorySupervisor.class)
                 .chatModel(gptChatModel)
+                .supervisorContext("""
+                        执行顺序：
+                        1. 必须先调用 generateStory，使用 topic 作为主题生成故事，并把结果保存为 story。
+                        2. 必须再调用 editStory，使用上一步的 story 和用户给定的 style 改写故事。
+                        3. 最终只返回 editStory 得到的故事正文。如果某一步返回空内容，重新调用对应代理，不要直接返回空字符串。
+                        """)
                 .subAgents(creativeWriter, styleEditor)
+                .responseStrategy(SupervisorResponseStrategy.LAST)
                 .build();
 
         // 步骤 4: 调用监督代理（端到端测试）
-        String topic = "龙与魔法师的冒险";
-        String style = "喜剧";
-
         System.out.println("🚀 开始执行端到端工作流...");
         System.out.println("主题: " + topic);
         System.out.println("风格: " + style);
         System.out.println("─────────────────────────────");
 
         String finalStory = supervisor.createStyledStory(topic, style);
+        if ( !hasText(finalStory)) {
+            System.out.println("监督代理返回空内容，改为按顺序直接调用远程写作代理和本地风格编辑代理。");
+            String story = creativeWriter.generateStory(topic);
+            finalStory = hasText(story) ? styleEditor.editStory(story, style) : story;
+            if (!hasText(finalStory)) {
+                finalStory = story;
+            }
+        }
 
         System.out.println("─────────────────────────────");
         System.out.println("✅ 最终生成的故事:");
         System.out.println(finalStory);
         return finalStory;
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }
