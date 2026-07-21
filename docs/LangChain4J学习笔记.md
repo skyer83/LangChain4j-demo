@@ -3,4 +3,4 @@
 ## [教程](https://langchain4j.cn/tutorials/)
 
 
-当前进度：Agents 与 Agentic AI 的 [[非 AI 代理](https://langchain4j.cn/tutorials/agents.html#非-ai-代理)]
+当前进度：工具（函数调用） 的 [[工具（函数调用）](https://langchain4j.cn/tutorials/tools.html)]
