@@ -9,6 +9,7 @@ import dev.langchain4j.service.V;
  * @since 2026/6/15 10:00
  */
 public interface StyledWriter {
+
     @Agent
     String writeStoryWithStyle(@V("topic") String topic, @V("style") String style);
 }

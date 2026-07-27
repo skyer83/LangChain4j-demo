@@ -8,7 +8,6 @@ import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,12 +31,6 @@ public class AssistantConfiguration {
     @Bean
     ChatModelListener chatModelListener() {
         return new MyChatModelListener();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "langchain4j.custom.chat-models.gpt")
-    GptChatModelProperties gptChatModelProperties() {
-        return new GptChatModelProperties();
     }
     
     /**
@@ -66,56 +59,27 @@ public class AssistantConfiguration {
     }
 
     /**
-     * 可参考 dev.langchain4j.openai.spring.ChatModelProperties 配置项进行配置
+     * 自定义调用的大模型
+     * @param httpClientBuilder
+     * @param properties
+     * @param chatModelListeners
+     * @return dev.langchain4j.model.chat.ChatModel
      * @author shenjh
-     * @since 2026/7/16 11:04
-     * @version 1.0
+     * @since 2026/7/16 9:43
      */
-    static class GptChatModelProperties {
-        private String baseUrl;
-        private String apiKey;
-        private String modelName;
-        private Boolean logRequests;
-        private Boolean logResponses;
-
-        public String getBaseUrl() {
-            return baseUrl;
-        }
-
-        public void setBaseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-        }
-
-        public String getApiKey() {
-            return apiKey;
-        }
-
-        public void setApiKey(String apiKey) {
-            this.apiKey = apiKey;
-        }
-
-        public String getModelName() {
-            return modelName;
-        }
-
-        public void setModelName(String modelName) {
-            this.modelName = modelName;
-        }
-
-        public Boolean getLogRequests() {
-            return logRequests;
-        }
-
-        public void setLogRequests(Boolean logRequests) {
-            this.logRequests = logRequests;
-        }
-
-        public Boolean getLogResponses() {
-            return logResponses;
-        }
-
-        public void setLogResponses(Boolean logResponses) {
-            this.logResponses = logResponses;
-        }
+    @Bean(LangChain4JConstants.ChatModel.DEEPSEEK_CHAT_MODEL)
+    ChatModel deepseekChatModel(
+            @Qualifier("openAiChatModelHttpClientBuilder") HttpClientBuilder httpClientBuilder,
+            DeepseekChatModelProperties properties,
+            ObjectProvider<ChatModelListener> chatModelListeners) {
+        return OpenAiChatModel.builder()
+                .httpClientBuilder(httpClientBuilder)
+                .baseUrl(properties.getBaseUrl())
+                .apiKey(properties.getApiKey())
+                .modelName(properties.getModelName())
+                .logRequests(properties.getLogRequests())
+                .logResponses(properties.getLogResponses())
+                .listeners(chatModelListeners.orderedStream().toList())
+                .build();
     }
 }

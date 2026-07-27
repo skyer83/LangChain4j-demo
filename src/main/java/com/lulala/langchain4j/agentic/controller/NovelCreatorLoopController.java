@@ -24,19 +24,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class NovelCreatorLoopController {
 
     @Autowired
-    private ChatModel gptChatModel;
+    private ChatModel deepseekChatModel;
 
     @GetMapping("/createNovel")
     public String createNovel() {
         StyleEditor styleEditor = AgenticServices
                 .agentBuilder(StyleEditor.class)
-                .chatModel(gptChatModel)
+                .chatModel(deepseekChatModel)
                 .outputKey("story")
                 .build();
 
         StyleScorer styleScorer = AgenticServices
                 .agentBuilder(StyleScorer.class)
-                .chatModel(gptChatModel)
+                .chatModel(deepseekChatModel)
                 .outputKey("score")
                 .build();
 
@@ -49,7 +49,7 @@ public class NovelCreatorLoopController {
 
         CreativeWriter creativeWriter = AgenticServices
                 .agentBuilder(CreativeWriter.class)
-                .chatModel(gptChatModel)
+                .chatModel(deepseekChatModel)
                 .outputKey("story")
                 .build();
 

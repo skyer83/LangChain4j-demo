@@ -17,5 +17,7 @@ public class LangChain4JConstants {
         public static final String OLLAMA_CHAT_MODEL = "ollamaChatModel";
         /** 对应配置项：langchain4j.custom.chat-model.gpt */
         public static final String GPT_CHAT_MODEL = "gptChatModel";
+        /** 对应配置项：langchain4j.custom.chat-model.deepseek */
+        public static final String DEEPSEEK_CHAT_MODEL = "deepseekChatModel";
     }
 }

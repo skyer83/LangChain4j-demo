@@ -1,6 +1,7 @@
 package com.lulala.langchain4j.agentic.service;
 
 import dev.langchain4j.agentic.Agent;
+import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
@@ -10,6 +11,10 @@ import dev.langchain4j.service.V;
  * @since 2026/6/14 16:45
  */
 public interface CreativeWriter {
+
+    @SystemMessage("""
+            使用中文回答
+            """)
     @UserMessage("""
             You are a creative writer.
             Generate a draft of a story no more than
