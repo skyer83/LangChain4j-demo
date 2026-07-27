@@ -1,7 +1,7 @@
 package com.lulala.langchain4j.toolspecification.controller;
 
 import cn.hutool.json.JSONUtil;
-import com.lulala.langchain4j.toolspecification.tools.MathTool;
+import com.lulala.langchain4j.toolspecification.tools.MathTools;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.agent.tool.ToolSpecifications;
@@ -45,7 +45,7 @@ public class MathController {
      */
     @RequestMapping("/sum")
     public String sum(@RequestParam("a") double a, @RequestParam("b") double b) {
-        List<ToolSpecification> toolSpecifications = ToolSpecifications.toolSpecificationsFrom(MathTool.class)
+        List<ToolSpecification> toolSpecifications = ToolSpecifications.toolSpecificationsFrom(MathTools.class)
                 .stream()
                 .filter(toolSpecification -> "sum".equals(toolSpecification.name()))
                 .toList();
@@ -64,7 +64,7 @@ public class MathController {
             throw new IllegalStateException("模型没有返回工具调用请求，MathTool.sum 未被调用。模型响应：" + aiMessage.text());
         }
 
-        MathTool mathTool = new MathTool();
+        MathTools mathTool = new MathTools();
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(userMessage);
         messages.add(aiMessage);
@@ -93,7 +93,7 @@ public class MathController {
      */
     @RequestMapping("/squareRoot")
     public String squareRoot(@RequestParam("a") double a) {
-        List<ToolSpecification> toolSpecifications = ToolSpecifications.toolSpecificationsFrom(MathTool.class)
+        List<ToolSpecification> toolSpecifications = ToolSpecifications.toolSpecificationsFrom(MathTools.class)
                 .stream()
                 .filter(toolSpecification -> "squareRoot".equals(toolSpecification.name()))
                 .toList();
@@ -112,7 +112,7 @@ public class MathController {
             throw new IllegalStateException("模型没有返回工具调用请求，MathTool.squareRoot 未被调用。模型响应：" + aiMessage.text());
         }
 
-        MathTool mathTool = new MathTool();
+        MathTools mathTool = new MathTools();
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(userMessage);
         messages.add(aiMessage);

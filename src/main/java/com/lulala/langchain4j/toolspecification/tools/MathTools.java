@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2026/7/27 13:52
  */
 @Slf4j
-public class MathTool {
+public class MathTools {
 
     @Tool("将给定的2个数字进行相加")
     public double sum(double a, double b) {
