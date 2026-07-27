@@ -117,8 +117,12 @@ public class MathController {
         messages.add(userMessage);
         messages.add(aiMessage);
         for (ToolExecutionRequest toolExecutionRequest : aiMessage.toolExecutionRequests()) {
+            // 前面模型判断需要调用哪些工具
+            // 开始执行 MathTool.squareRoot 方法
             String result = new DefaultToolExecutor(mathTool, toolExecutionRequest).execute(toolExecutionRequest, null);
+            // >>>>>> toolExecutionRequest: ToolExecutionRequest { id = "call_00_VPlsGPyi5AqPHwWlg4C32463", name = "squareRoot", arguments = "{"a": 475695037565}" }
             log.info(">>>>>> toolExecutionRequest: {}", toolExecutionRequest);
+            // >>>>>> toolExecutionResult: 689706.4865324959
             log.info(">>>>>> toolExecutionResult: {}", result);
             messages.add(ToolExecutionResultMessage.from(toolExecutionRequest, result));
         }
