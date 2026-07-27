@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 参见：https://langchain4j.cn/tutorials/tools.html<br/>
+ * 低级工具 API
  * @author shenjh
  * @version 1.0
  * @since 2026/7/27 14:24
