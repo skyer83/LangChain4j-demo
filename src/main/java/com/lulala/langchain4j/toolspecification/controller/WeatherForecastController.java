@@ -52,18 +52,16 @@ public class WeatherForecastController {
         return getWeater(city, temperatureUnit, toolSpecifications);
     }
 
-    /**
-     * 获取指定城市的天气预报
-     * @param city
-     * @param temperatureUnit
-     * @return java.lang.String
-     * @author shenjh
-     * @since 2026/7/27 14:34
-     */
-    @RequestMapping("/getWeather02")
-    public String getWeather02(@RequestParam("city") String city, @RequestParam("temperatureUnit") TemperatureUnit temperatureUnit) {
-        List<ToolSpecification> toolSpecifications = getToolSpecification02();
-        return getWeater(city, temperatureUnit, toolSpecifications);
+    private List<ToolSpecification> getToolSpecification01() {
+        return List.of(ToolSpecification.builder()
+                .name("getWeather")
+                .description("返回给定城市的天气预报")
+                .parameters(JsonObjectSchema.builder()
+                        .addStringProperty("city", "要返回天气预报的城市")
+                        .addEnumProperty("temperatureUnit", List.of(TemperatureUnit.CELSIUS.name(), TemperatureUnit.FAHRENHEIT.name()))
+                        .required("city")
+                        .build())
+                .build());
     }
 
     private String getWeater(String city, TemperatureUnit temperatureUnit, List<ToolSpecification> toolSpecifications) {
@@ -78,10 +76,10 @@ public class WeatherForecastController {
         log.info(">>>>>> toolExecutionRequests: {}", aiMessage.toolExecutionRequests());
 
         if (!aiMessage.hasToolExecutionRequests()) {
-            throw new IllegalStateException("模型没有返回工具调用请求，WeatherTools.getWeather 未被调用。模型响应：" + aiMessage.text());
+            throw new RuntimeException("模型没有返回工具调用请求，WeatherTools.getWeather 未被调用。模型响应：" + aiMessage.text());
         }
 
-        WeatherTools weatherTools = new WeatherTools();
+        WeatherTools weatherTools = new WeatherTools(deepseekChatModel);
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(userMessage);
         messages.add(aiMessage);
@@ -101,19 +99,36 @@ public class WeatherForecastController {
         return finalAiMessage.text();
     }
 
-    private List<ToolSpecification> getToolSpecification01() {
-        return List.of(ToolSpecification.builder()
-                .name("getWeather")
-                .description("返回给定城市的天气预报")
-                .parameters(JsonObjectSchema.builder()
-                        .addStringProperty("city", "要返回天气预报的城市")
-                        .addEnumProperty("temperatureUnit", List.of(TemperatureUnit.CELSIUS.name(), TemperatureUnit.FAHRENHEIT.name()))
-                        .required("city")
-                        .build())
-                .build());
+    /**
+     * 获取指定城市的天气预报
+     * @param city
+     * @param temperatureUnit
+     * @return java.lang.String
+     * @author shenjh
+     * @since 2026/7/27 14:34
+     */
+    @RequestMapping("/getWeather02")
+    public String getWeather02(@RequestParam("city") String city, @RequestParam("temperatureUnit") TemperatureUnit temperatureUnit) {
+        List<ToolSpecification> toolSpecifications = getToolSpecification02();
+        return getWeater(city, temperatureUnit, toolSpecifications);
     }
 
     private List<ToolSpecification> getToolSpecification02() {
-        return ToolSpecifications.toolSpecificationsFrom(WeatherTools.class);
+        WeatherTools weatherTools = new WeatherTools(deepseekChatModel);
+        return ToolSpecifications.toolSpecificationsFrom(weatherTools);
     }
+
+//    /**
+//     * 获取指定城市的天气预报
+//     * @param city
+//     * @param temperatureUnit
+//     * @return java.lang.String
+//     * @author shenjh
+//     * @since 2026/7/27 14:34
+//     */
+//    @RequestMapping("/getWeatherStreaming")
+//    public String getWeatherStreaming(@RequestParam("city") String city, @RequestParam("temperatureUnit") TemperatureUnit temperatureUnit) {
+//        List<ToolSpecification> toolSpecifications = getToolSpecification01();
+//        return getWeater(city, temperatureUnit, toolSpecifications);
+//    }
 }
