@@ -79,7 +79,7 @@ public class WeatherForecastController {
             throw new RuntimeException("模型没有返回工具调用请求，WeatherTools.getWeather 未被调用。模型响应：" + aiMessage.text());
         }
 
-        WeatherTools weatherTools = new WeatherTools(deepseekChatModel);
+        WeatherTools weatherTools = new WeatherTools();
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(userMessage);
         messages.add(aiMessage);
@@ -114,7 +114,7 @@ public class WeatherForecastController {
     }
 
     private List<ToolSpecification> getToolSpecification02() {
-        WeatherTools weatherTools = new WeatherTools(deepseekChatModel);
+        WeatherTools weatherTools = new WeatherTools();
         return ToolSpecifications.toolSpecificationsFrom(weatherTools);
     }
 
