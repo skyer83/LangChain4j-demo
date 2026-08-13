@@ -4,8 +4,10 @@ import com.lulala.langchain4j.openai.constant.LangChain4JConstants;
 import com.lulala.langchain4j.openai.listener.MyChatModelListener;
 import dev.langchain4j.http.client.HttpClientBuilder;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -74,6 +76,28 @@ public class AssistantConfiguration {
             ObjectProvider<ChatModelListener> chatModelListeners) {
         return OpenAiChatModel.builder()
                 .httpClientBuilder(httpClientBuilder)
+                .baseUrl(properties.getBaseUrl())
+                .apiKey(properties.getApiKey())
+                .modelName(properties.getModelName())
+                .logRequests(properties.getLogRequests())
+                .logResponses(properties.getLogResponses())
+                .listeners(chatModelListeners.orderedStream().toList())
+                .build();
+    }
+
+    /**
+     * 自定义调用的大模型
+     * @param properties
+     * @param chatModelListeners
+     * @return dev.langchain4j.model.chat.ChatModel
+     * @author shenjh
+     * @since 2026/7/16 9:43
+     */
+    @Bean(LangChain4JConstants.ChatModel.DEEPSEEK_STREAMING_CHAT_MODEL)
+    StreamingChatModel deepseekStreamingChatModel(
+            DeepseekStreamingChatModelProperties properties,
+            ObjectProvider<ChatModelListener> chatModelListeners) {
+        return OpenAiStreamingChatModel.builder()
                 .baseUrl(properties.getBaseUrl())
                 .apiKey(properties.getApiKey())
                 .modelName(properties.getModelName())

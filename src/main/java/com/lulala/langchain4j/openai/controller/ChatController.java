@@ -40,7 +40,7 @@ public class ChatController {
     private final StreamingChatModel streamingChatModel;
 
     public ChatController(@Qualifier("openAiChatModel") ChatModel chatModel,
-                          StreamingChatModel streamingChatModel) {
+                          @Qualifier("openAiStreamingChatModel") StreamingChatModel streamingChatModel) {
         this.chatModel = chatModel;
         this.streamingChatModel = streamingChatModel;
     }
