@@ -35,38 +35,38 @@ public class MyChatModelListener implements ChatModelListener {
         ChatRequest chatRequest = requestContext.chatRequest();
 
         List<ChatMessage> messages = chatRequest.messages();
-        System.out.println("chatRequest.messages=" + messages);
+        log.info("chatRequest.messages={}", messages);
 
         ChatRequestParameters parameters = chatRequest.parameters();
-        System.out.println("parameters.modelName=" + parameters.modelName());
-        System.out.println("parameters.temperature=" + parameters.temperature());
-        System.out.println("parameters.topP=" + parameters.topP());
-        System.out.println("parameters.topK=" + parameters.topK());
-        System.out.println("parameters.frequencyPenalty=" + parameters.frequencyPenalty());
-        System.out.println("parameters.presencePenalty=" + parameters.presencePenalty());
-        System.out.println("parameters.maxOutputTokens=" + parameters.maxOutputTokens());
-        System.out.println("parameters.stopSequences=" + parameters.stopSequences());
-        System.out.println("parameters.toolSpecifications=" + parameters.toolSpecifications());
-        System.out.println("parameters.toolChoice=" + parameters.toolChoice());
-        System.out.println("parameters.responseFormat=" + parameters.responseFormat());
+        log.info("parameters.modelName={}", parameters.modelName());
+        log.info("parameters.temperature={}", parameters.temperature());
+        log.info("parameters.topP={}", parameters.topP());
+        log.info("parameters.topK={}", parameters.topK());
+        log.info("parameters.frequencyPenalty={}", parameters.frequencyPenalty());
+        log.info("parameters.presencePenalty={}", parameters.presencePenalty());
+        log.info("parameters.maxOutputTokens={}", parameters.maxOutputTokens());
+        log.info("parameters.stopSequences={}", parameters.stopSequences());
+        log.info("parameters.toolSpecifications={}", parameters.toolSpecifications());
+        log.info("parameters.toolChoice={}", parameters.toolChoice());
+        log.info("parameters.responseFormat={}", parameters.responseFormat());
 
         if (parameters instanceof OpenAiChatRequestParameters openAiParameters) {
-            System.out.println("openAiParameters.maxCompletionTokens=" + openAiParameters.maxCompletionTokens());
-            System.out.println("openAiParameters.logitBias=" + openAiParameters.logitBias());
-            System.out.println("openAiParameters.parallelToolCalls=" + openAiParameters.parallelToolCalls());
-            System.out.println("openAiParameters.seed=" + openAiParameters.seed());
-            System.out.println("openAiParameters.user=" + openAiParameters.user());
-            System.out.println("openAiParameters.store=" + openAiParameters.store());
-            System.out.println("openAiParameters.metadata=" + openAiParameters.metadata());
-            System.out.println("openAiParameters.serviceTier=" + openAiParameters.serviceTier());
-            System.out.println("openAiParameters.reasoningEffort=" + openAiParameters.reasoningEffort());
+            log.info("openAiParameters.maxCompletionTokens={}", openAiParameters.maxCompletionTokens());
+            log.info("openAiParameters.logitBias={}", openAiParameters.logitBias());
+            log.info("openAiParameters.parallelToolCalls={}", openAiParameters.parallelToolCalls());
+            log.info("openAiParameters.seed={}", openAiParameters.seed());
+            log.info("openAiParameters.user={}", openAiParameters.user());
+            log.info("openAiParameters.store={}", openAiParameters.store());
+            log.info("openAiParameters.metadata={}", openAiParameters.metadata());
+            log.info("openAiParameters.serviceTier={}", openAiParameters.serviceTier());
+            log.info("openAiParameters.reasoningEffort={}", openAiParameters.reasoningEffort());
         }
 
-        System.out.println("requestContext.modelProvider=" + requestContext.modelProvider());
+        log.info("requestContext.modelProvider={}", requestContext.modelProvider());
 
         Map<Object, Object> attributes = requestContext.attributes();
         attributes.put("my-attribute", "my-value");
-        System.out.println("my-attribute=" + attributes.get("my-attribute"));
+        log.info("onRequest my-attribute={}", attributes.get("my-attribute"));
     }
 
     @Override
@@ -76,43 +76,43 @@ public class MyChatModelListener implements ChatModelListener {
         ChatResponse chatResponse = responseContext.chatResponse();
 
         AiMessage aiMessage = chatResponse.aiMessage();
-        System.out.println("chatResponse.aiMessage=" + aiMessage);
+        log.info("chatResponse.aiMessage={}", aiMessage);
 
         ChatResponseMetadata metadata = chatResponse.metadata();
-        System.out.println("metadata.id=" + metadata.id());
-        System.out.println("metadata.modelName=" + metadata.modelName());
-        System.out.println("metadata.finishReason=" + metadata.finishReason());
+        log.info("metadata.id={}", metadata.id());
+        log.info("metadata.modelName={}", metadata.modelName());
+        log.info("metadata.finishReason={}", metadata.finishReason());
 
         if (metadata instanceof OpenAiChatResponseMetadata openAiMetadata) {
-            System.out.println("openAiMetadata.created=" + openAiMetadata.created());
-            System.out.println("openAiMetadata.serviceTier=" + openAiMetadata.serviceTier());
-            System.out.println("openAiMetadata.systemFingerprint=" + openAiMetadata.systemFingerprint());
+            log.info("openAiMetadata.created={}", openAiMetadata.created());
+            log.info("openAiMetadata.serviceTier={}", openAiMetadata.serviceTier());
+            log.info("openAiMetadata.systemFingerprint={}", openAiMetadata.systemFingerprint());
         }
 
         TokenUsage tokenUsage = metadata.tokenUsage();
-        System.out.println("tokenUsage.inputTokenCount=" + tokenUsage.inputTokenCount());
-        System.out.println("tokenUsage.outputTokenCount=" + tokenUsage.outputTokenCount());
-        System.out.println("tokenUsage.totalTokenCount=" + tokenUsage.totalTokenCount());
+        log.info("tokenUsage.inputTokenCount={}", tokenUsage.inputTokenCount());
+        log.info("tokenUsage.outputTokenCount={}", tokenUsage.outputTokenCount());
+        log.info("tokenUsage.totalTokenCount={}", tokenUsage.totalTokenCount());
         if (tokenUsage instanceof OpenAiTokenUsage openAiTokenUsage) {
             // 缓存命中的输入 Token 数
             OpenAiTokenUsage.InputTokensDetails inputTokensDetails = openAiTokenUsage.inputTokensDetails();
             if (inputTokensDetails != null) {
-                System.out.println("openAiTokenUsage.inputTokensDetails.cachedTokens=" + inputTokensDetails.cachedTokens());
+                log.info("openAiTokenUsage.inputTokensDetails.cachedTokens={}", inputTokensDetails.cachedTokens());
             }
             // 推理消耗的 Token 数
             OpenAiTokenUsage.OutputTokensDetails outputTokensDetails = openAiTokenUsage.outputTokensDetails();
             if (outputTokensDetails != null) {
-                System.out.println("openAiTokenUsage.outputTokensDetails.reasoningTokens=" + outputTokensDetails.reasoningTokens());
+                log.info("openAiTokenUsage.outputTokensDetails.reasoningTokens={}", outputTokensDetails.reasoningTokens());
             }
         }
 
         ChatRequest chatRequest = responseContext.chatRequest();
-        System.out.println("responseContext.chatRequest=" + chatRequest);
+        log.info("responseContext.chatRequest={}", chatRequest);
 
-        System.out.println("responseContext.modelProvider=" + responseContext.modelProvider());
+        log.info("responseContext.modelProvider={}", responseContext.modelProvider());
 
         Map<Object, Object> attributes = responseContext.attributes();
-        System.out.println("my-attribute=" + attributes.get("my-attribute"));
+        log.info("onResponse my-attribute={}", attributes.get("my-attribute"));
     }
 
     @Override
@@ -123,11 +123,11 @@ public class MyChatModelListener implements ChatModelListener {
         log.error("onError()", error);
 
         ChatRequest chatRequest = errorContext.chatRequest();
-        System.out.println("errorContext.chatRequest=" + chatRequest);
+        log.info("errorContext.chatRequest={}", chatRequest);
 
-        System.out.println("errorContext.modelProvider=" + errorContext.modelProvider());
+        log.info("errorContext.modelProvider={}", errorContext.modelProvider());
 
         Map<Object, Object> attributes = errorContext.attributes();
-        System.out.println("my-attribute=" + attributes.get("my-attribute"));
+        log.info("onError my-attribute={}", attributes.get("my-attribute"));
     }
 }

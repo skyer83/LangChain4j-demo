@@ -2,6 +2,7 @@ package com.lulala.langchain4j.openai.listener;
 
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.service.spring.event.AiServiceRegisteredEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @version 1.0
  * @since 2026/6/8 13:33
  */
+@Slf4j
 @Component
 public class AiServiceRegisteredEventListener implements ApplicationListener<AiServiceRegisteredEvent> {
 
@@ -24,7 +26,7 @@ public class AiServiceRegisteredEventListener implements ApplicationListener<AiS
         Class<?> aiServiceClass = event.aiServiceClass();
         List<ToolSpecification> toolSpecificationList = event.toolSpecifications();
         for (int i = 0; i < toolSpecificationList.size(); i++) {
-            System.out.printf("[%s]: [Tool-%s]: %s%n", aiServiceClass.getSimpleName(), i + 1, toolSpecificationList.get(i));
+            log.info("[{}]: [Tool-{}]: {}", aiServiceClass.getSimpleName(), i + 1, toolSpecificationList.get(i));
         }
     }
 }
