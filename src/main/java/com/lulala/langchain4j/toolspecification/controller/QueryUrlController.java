@@ -1,7 +1,7 @@
 package com.lulala.langchain4j.toolspecification.controller;
 
-import com.lulala.langchain4j.toolspecification.service.QueryService;
-import com.lulala.langchain4j.toolspecification.tools.QueryTools;
+import com.lulala.langchain4j.toolspecification.service.QueryUrlService;
+import com.lulala.langchain4j.toolspecification.tools.QueryUrlTools;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +22,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/toolspecification/query")
-public class QueryController {
+public class QueryUrlController {
 
     @Autowired
     private ChatModel deepseekChatModel;
     @Autowired
-    private QueryTools queryTools;
+    private QueryUrlTools queryTools;
 
     /**
      * 根据查询内容返回相关的 URL 列表
@@ -38,7 +38,7 @@ public class QueryController {
      */
     @RequestMapping("/getUrlsByQueryContent")
     public List<String> getUrlsByQueryContent(@RequestParam("query") String query) {
-        QueryService queryService = AiServices.builder(QueryService.class)
+        QueryUrlService queryService = AiServices.builder(QueryUrlService.class)
                 .chatModel(deepseekChatModel)
                 .tools(queryTools)
                 .build();
@@ -54,7 +54,7 @@ public class QueryController {
      */
     @RequestMapping("/getWebPageByUrl")
     public String getWebPageByUrl(@RequestParam("url") String url) {
-        QueryService queryService = AiServices.builder(QueryService.class)
+        QueryUrlService queryService = AiServices.builder(QueryUrlService.class)
                 .chatModel(deepseekChatModel)
                 .tools(queryTools)
                 .build();
