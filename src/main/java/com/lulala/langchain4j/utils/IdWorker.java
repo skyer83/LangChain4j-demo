@@ -1,5 +1,7 @@
 package com.lulala.langchain4j.utils;
 
+import cn.hutool.core.util.IdUtil;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -264,6 +266,56 @@ public class IdWorker {
     public static long nextMeituanId() {
         return MEITUAN.nextId();
     }
+
+    /**
+     * 真正上生产，用`IdUtil.getSnowflake()`更省心<br/>
+     * 雪花算法，跟 nextMeituanId 为同一档方案
+     * @return long
+     * @author shenjh
+     * @since 2026/8/21 11:29
+     */
+    public static long getSnowflakeNextId() {
+        return IdUtil.getSnowflakeNextId();
+    }
+
+    /** Hutool 工具类，生成纳秒级 ID（字符串格式） */
+    public static String nextNanoId() {
+        return IdUtil.nanoId();
+    }
+
+    /*
+        ## 结论：`nextMeituanId()` 更符合你的要求，且它与 `IdUtil.getSnowflake()` 是同一档的方案
+
+        先把你提的要求拆成两条硬指标逐项对照：
+
+        | 指标 | `nextDidiId()`（号段模式） | `nextMeituanId()`（雪花模式） | Hutool `IdUtil.getSnowflake()` |
+        |---|---|---|---|
+        | 微服务多实例不重复 | ❌ 不满足（demo 实现无跨实例协调） | ✅ 满足（workerId 区分节点，最多 1024 个） | ✅ 满足（workerId + dataCenterId） |
+        | 时钟回拨不重复 | ✅ 完全免疫（根本不读时钟） | ✅ 满足（≤5ms 等待，>5ms 抛异常拒绝） | ✅ 满足（同款策略） |
+        | 重启后不重复 | ❌ 不满足（重启后游标重置） | ✅ 满足（时间戳趋势递增） | ✅ 满足 |
+        | 成熟度/开箱即用 | 玩具级（无 DB 持久化） | 手写但逻辑完整 | ✅ 久经考验，支持 nextIdStr 等 |
+
+        ### `nextDidiId()` 为什么不达标
+
+        号段模式对时钟回拨**天然免疫**（[IdWorker.java](file:///C:/git/demo/LangChain4j-demo/src/main/java/com/lulala/langchain4j/utils/IdWorker.java#L37-L124) 里全程没碰系统时钟），但这份 demo 实现有两处硬伤：
+
+        1. **多实例必重复**：`DIDI` 是写死的 `new DidiSegmentGenerator(1, 1000, 1000)`（[第 256 行](file:///C:/git/demo/LangChain4j-demo/src/main/java/com/lulala/langchain4j/utils/IdWorker.java#L256)），号段耗尽时也只是本地 `currentEnd + 1` 续段（[第 95 行](file:///C:/git/demo/LangChain4j-demo/src/main/java/com/lulala/langchain4j/utils/IdWorker.java#L95)）。微服务里每个实例都会从 1 开始发号，互相不知道对方发到哪了，必然撞 ID。真正的滴滴 TinyId 是靠**中心化 DB 统一切分号段**来保证各实例拿到的区间不重叠。
+        2. **重启即重复**：没有把游标/号段落库，进程重启后 `cursor` 回到 1，重新发一遍 1~1000。
+
+        所以号段模式本身是好方案，但**这份手写实现目前只配在单体 + 不重启的场景下用**，与"微服务"前提冲突。
+
+        ### `nextMeituanId()` 为什么达标
+
+        它的回拨策略（[第 179-199 行](file:///C:/git/demo/LangChain4j-demo/src/main/java/com/lulala/langchain4j/utils/IdWorker.java#L179-L199)）与 Hutool 5.8.46 `cn.hutool.core.util.Snowflake` 的源码逻辑完全同源：**回拨 ≤5ms 等待追平继续发号，>5ms 直接拒绝生成**——宁可短暂不可用，也绝不发重复号。同时 10-bit workerId 内嵌在 ID 里，各实例分配不同 workerId 即可互不干扰，这正是微服务场景需要的。
+
+        ### 与 Hutool 的横向比较
+
+        - `nextMeituanId()` ≈ `IdUtil.getSnowflake(workerId, dataCenterId)`：两者等价，Hutool 版还多几个便利点（`nextIdStr()`、`isUseSystemClock` 缓存时钟参数、双维度机器标识），要上生产直接用它即可。
+        - `IdUtil.objectId()`：计数器兜底，回拨也免疫，是除雪花外第二个"回拨不重复"的 Hutool 选项，但它是字符串且非严格递增，做数据库主键不如雪花友好。
+        - `IdUtil.nanoId()` / UUID：无时钟依赖，但无序，不符合"微服务 ID"通常想要的趋势递增特性。
+
+        **一句话总结**：手写方案里选 `nextMeituanId()`；要真正上生产，用等价的 `IdUtil.getSnowflake()` 更省心。
+     */
 
     public static void main(String[] args) {
         // didi: 1

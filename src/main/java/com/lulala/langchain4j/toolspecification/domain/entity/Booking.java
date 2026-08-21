@@ -1,5 +1,6 @@
-package com.lulala.langchain4j.openai.domain.entity;
+package com.lulala.langchain4j.toolspecification.domain.entity;
 
+import dev.langchain4j.model.output.structured.Description;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +17,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Description("预约信息")
 public class Booking {
 
+    @Description("预约ID")
     Long id;
+    @Description("预约编号")
     String bookingNumber;
+    @Description("客户姓名")
     String customerName;
+    @Description("客户姓氏")
     String customerSurname;
 }
