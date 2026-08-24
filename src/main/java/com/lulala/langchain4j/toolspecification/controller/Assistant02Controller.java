@@ -14,6 +14,8 @@ import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.tool.ToolExecution;
 import dev.langchain4j.service.tool.ToolExecutor;
+import dev.langchain4j.service.tool.ToolProvider;
+import dev.langchain4j.service.tool.ToolProviderResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -132,7 +134,8 @@ public class Assistant02Controller {
                 .name("getBookingDetails")
                 .description("获取预约详情")
                 .parameters(JsonObjectSchema.builder()
-                        .addStringProperty("bookingNumber", message)
+                        // 注意：这里不要举例为“例如：1 号”，否则获取到的 bookingNumber 值会为如“3号”，而不是“3”
+                        .addStringProperty("bookingNumber", "预约编号，例如：1")
                         .required("bookingNumber")
                         .build())
                 .build();
@@ -140,7 +143,7 @@ public class Assistant02Controller {
             Map<String, Object> arguments = parseToolArguments(toolExecutionRequest.arguments());
             String bookingNumber = String.valueOf(arguments.getOrDefault("bookingNumber", "")).trim();
             if (bookingNumber.isBlank()) {
-                return "预约编号不能为空";
+                return "请提供预约编号";
             }
 
             Booking booking = bookingTools.getBookingDetails(bookingNumber);
@@ -165,5 +168,58 @@ public class Assistant02Controller {
         } catch (Exception e) {
             throw new IllegalArgumentException("解析工具参数失败: " + arguments, e);
         }
+    }
+
+    /**
+     * 动态指定工具
+     * @param message
+     * @return java.lang.String
+     * @author shenjh
+     * @since 2026/8/24 11:42
+     */
+    @GetMapping("/getBookingDetailsProvider")
+    public String getBookingDetailsProvider(@RequestParam("message") String message) {
+        // 获取 xx 号的预约详情
+        ToolProvider toolProvider = toolProviderRequest -> {
+            String userMessage = toolProviderRequest.userMessage().singleText();
+            if (userMessage.contains("预订") || userMessage.contains("预约")) {
+                ToolSpecification toolSpecification = ToolSpecification.builder()
+                        .name("getBookingDetails")
+                        .description("获取预约详情")
+                        .parameters(JsonObjectSchema.builder()
+                                .addStringProperty("bookingNumber", "预约编号，例如：1")
+                                .required("bookingNumber")
+                                .build())
+                        .build();
+
+
+                ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
+                    Map<String, Object> arguments = parseToolArguments(toolExecutionRequest.arguments());
+                    String bookingNumber = String.valueOf(arguments.getOrDefault("bookingNumber", "")).trim();
+                    if (bookingNumber.isBlank()) {
+                        return "请提供预约编号";
+                    }
+
+                    Booking booking = bookingTools.getBookingDetails(bookingNumber);
+                    if (booking == null) {
+                        return "未找到预约编号为 %s 的预约信息".formatted(bookingNumber);
+                    }
+                    return booking.toString();
+                };
+
+                return ToolProviderResult.builder()
+                        .add(toolSpecification, toolExecutor)
+                        .build();
+            } else {
+                return null;
+            }
+        };
+        Assistant assistant = AiServices.builder(Assistant.class)
+                .chatModel(deepseekChatModel)
+                .toolProvider(toolProvider)
+                .build();
+        Result<String> chatResult = assistant.chat(message);
+        log.info("Tool Executions: {}", chatResult.toolExecutions());
+        return chatResult.content();
     }
 }
