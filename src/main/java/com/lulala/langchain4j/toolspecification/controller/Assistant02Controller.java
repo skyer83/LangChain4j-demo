@@ -35,22 +35,35 @@ public class Assistant02Controller {
     @Autowired
     private BookingTools bookingTools;
 
+    @GetMapping("/getAllBooking")
+    public String getAllBooking(@RequestParam("message") String message) {
+        // 获取所有预约详情
+        return chat(message);
+    }
+
     @GetMapping("/addBooking")
     public String addBooking(@RequestParam("message") String message) {
+        // 我叫张三，帮我预订一下
+        return chat(message);
+    }
+
+    @GetMapping("/getBookingDetails")
+    public String getBookingDetails(@RequestParam("message") String message) {
+        // 获取 xx 号的预约详情
+        return chat(message);
+    }
+
+    @GetMapping("/cancelBooking")
+    public String cancelBooking(@RequestParam("message") String message) {
+        // 取消 xx 号的预约
+        return chat(message);
+    }
+
+    private String chat(String message) {
         Assistant assistant = AiServices.builder(Assistant.class).chatModel(deepseekChatModel).tools(bookingTools).build();
         Result<String> chatResult = assistant.chat(message);
         List<ToolExecution> toolExecutions = chatResult.toolExecutions();
         log.info("Tool Executions: {}", toolExecutions);
         return chatResult.content();
-    }
-
-    @GetMapping("/getBookingDetails")
-    public String getBookingDetails() {
-        return "getBookingDetails";
-    }
-
-    @GetMapping("/cancelBooking")
-    public String cancelBooking() {
-        return "cancelBooking";
     }
 }

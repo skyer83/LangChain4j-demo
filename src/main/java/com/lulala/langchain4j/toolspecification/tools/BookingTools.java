@@ -7,6 +7,8 @@ import dev.langchain4j.agent.tool.Tool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @author shenjh
  * @version 1.0
@@ -22,6 +24,11 @@ public class BookingTools {
         this.bookingService = bookingService;
     }
 
+    @Tool("获取所有预约详情")
+    public List<Booking> getAllBooking() {
+        return bookingService.getAllBooking();
+    }
+
     @Tool("新增预约")
     public Booking addBooking(@P("客户姓名") String customerName, @P("客户姓氏") String customerSurname) {
         return bookingService.addBooking(customerName, customerSurname);
@@ -33,8 +40,8 @@ public class BookingTools {
     }
 
     @Tool("取消预约")
-    public void cancelBooking(@P("预约编号") String bookingNumber) {
-        bookingService.cancelBooking(bookingNumber);
+    public Booking cancelBooking(@P("预约编号") String bookingNumber) {
+        return bookingService.cancelBooking(bookingNumber);
     }
 
 }

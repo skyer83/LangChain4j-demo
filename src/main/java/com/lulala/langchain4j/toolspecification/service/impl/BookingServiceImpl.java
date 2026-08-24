@@ -30,6 +30,11 @@ public class BookingServiceImpl implements IBookingService {
     }
 
     @Override
+    public List<Booking> getAllBooking() {
+        return bookings;
+    }
+
+    @Override
     public Booking addBooking(String customerName, String customerSurname) {
         String bookingNumber = "1";
         if (CollectionUtil.isNotEmpty(bookings)) {
@@ -47,10 +52,12 @@ public class BookingServiceImpl implements IBookingService {
     }
 
     @Override
-    public void cancelBooking(String bookingNumber) {
-        boolean cancelBooking = bookings.removeIf(item -> item.getBookingNumber().equals(bookingNumber));
-        if (cancelBooking) {
+    public Booking cancelBooking(String bookingNumber) {
+        Booking booking = bookings.stream().filter(item -> item.getBookingNumber().equals(bookingNumber)).findFirst().orElse(null);
+        if (booking == null) {
             log.info("Canceling booking with booking number {}", bookingNumber);
         }
+        bookings.remove(booking);
+        return booking;
     }
 }
