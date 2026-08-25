@@ -69,6 +69,18 @@
             <artifactId>a2a-java-sdk-server-common</artifactId>
             <version>0.3.3.Final</version>
         </dependency>
+        <!-- Easy RAG -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-easy-rag</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+        <!-- 中文文档检索使用中文向量模型，避免中文短问题召回失败 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-embeddings-bge-small-zh-v15</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
