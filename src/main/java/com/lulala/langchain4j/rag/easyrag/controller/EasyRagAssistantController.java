@@ -39,9 +39,12 @@ public class EasyRagAssistantController {
     private final EasyRagAssistant assistant4Transformer;
     private final ContentRetriever contentRetriever4Transformer;
 
+    private final EasyRagAssistant assistant4Embedding;
+
     public EasyRagAssistantController(@Qualifier(LangChain4JConstants.ChatModel.DEEPSEEK_CHAT_MODEL) ChatModel deepseekChatModel,
                                       @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_EASY_RAG) ContentRetriever contentRetriever4EasyRag,
-                                      @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_TRANSFORMER) ContentRetriever contentRetriever4Transformer) {
+                                      @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_TRANSFORMER) ContentRetriever contentRetriever4Transformer,
+                                      @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_EMBEDDING) ContentRetriever contentRetriever4Embedding) {
         this.contentRetriever4EasyRag = contentRetriever4EasyRag;
         this.assistant4EasyRag = AiServices.builder(EasyRagAssistant.class)
                 .chatModel(deepseekChatModel)
@@ -54,6 +57,12 @@ public class EasyRagAssistantController {
                 .chatModel(deepseekChatModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
                 .contentRetriever(contentRetriever4Transformer)
+                .build();
+
+        this.assistant4Embedding = AiServices.builder(EasyRagAssistant.class)
+                .chatModel(deepseekChatModel)
+                .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+                .contentRetriever(contentRetriever4Embedding)
                 .build();
     }
 
@@ -87,7 +96,14 @@ public class EasyRagAssistantController {
         }
         return answer + System.lineSeparator() + citation;
     }
-
+    
+    /**
+     * 嵌入存储摄取器（Embedding Store Ingestor）
+     * @param message
+     * @return java.lang.String 
+     * @author shenjh
+     * @since 2026/8/26 17:08
+     */
     @GetMapping("/chat4Transformer")
     public String chat4Transformer(@RequestParam("message") String message) {
 //        String answer = assistant4Transformer.chat(message);
@@ -107,4 +123,17 @@ public class EasyRagAssistantController {
 //                .findFirst()
 //                .orElse(null);
 //    }
+    
+    /**
+     * 嵌入存储内容检索器（Embedding Store Content Retriever）
+     * @param message
+     * @return java.lang.String 
+     * @author shenjh
+     * @since 2026/8/26 17:07
+     */
+    @GetMapping("/chat4Embedding")
+    public String chat4Embedding(@RequestParam("message") String message) {
+        // contentRetriever4Embedding 已经将文件名放到每段 TextSegment 中，会返回完整的文件名，所以这里不需要再处理文件名
+        return assistant4Embedding.chat(message);
+    }
 }

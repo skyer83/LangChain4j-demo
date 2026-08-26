@@ -25,6 +25,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.util.List;
 
+import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
+
 /**
  * @author shenjh
  * @version 1.0
@@ -42,6 +44,12 @@ public class EasyRagConfig {
 
         public static final String EMBEDDING_STORE_4_TRANSFORMER = "embeddingStore4Transformer";
         public static final String CONTENT_RETRIEVER_4_TRANSFORMER = "contentRetriever4Transformer";
+
+        public static final String CONTENT_RETRIEVER_4_EMBEDDING = "contentRetriever4Embedding";
+    }
+
+    public static final class OtherInfo {
+        public static final String DEFAULT_USER_ID = "123456";
     }
 
     @Bean(BeanName.EMBEDDING_MODEL_OF_ZH_V15)
@@ -132,7 +140,7 @@ public class EasyRagConfig {
                     // documentTransformer document: DefaultDocument { text = "完整的文档内容", metadata = Metadata { metadata = {absolute_directory_path=C:\systemEnv\xxx\1, file_name=xxx.pdf} } }
                     //log.info("documentTransformer document: {}", document);
                     Metadata metadata = document.metadata();
-                    metadata.put("userId", "123456");
+                    metadata.put("userId", OtherInfo.DEFAULT_USER_ID);
                     // documentTransformer metadata: Metadata { metadata = {absolute_directory_path=C:\systemEnv\xxx\1, userId=123456, file_name=xxx.pdf} }
                     //log.info("documentTransformer metadata: {}", metadata);
                     return document;
@@ -191,6 +199,89 @@ public class EasyRagConfig {
                 .maxResults(5)
                 .minScore(0.25)
                 .build();
+    }
+
+    @Bean(BeanName.CONTENT_RETRIEVER_4_EMBEDDING)
+    ContentRetriever contentRetriever4Embedding(
+            @Qualifier(BeanName.EMBEDDING_MODEL_OF_ZH_V15) EmbeddingModel embeddingModelOfZhV15,
+            @Qualifier(BeanName.EMBEDDING_STORE_4_TRANSFORMER) EmbeddingStore<TextSegment> embeddingStore4Transformer) {
+        return EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore4Transformer)
+                .embeddingModel(embeddingModelOfZhV15)
+                .maxResults(5)
+                // maxResults 也可以根据查询动态指定
+                .dynamicMaxResults(query -> {
+                    /*
+                        contentRetriever4Embedding dynamicMaxResults query: Query {
+                            text = "用户的问题是：用户请求的问题xxx",
+                            metadata = Metadata {
+                                chatMessage = UserMessage { name = null, contents = [TextContent { text = "用户的问题是：用户请求的问题xxx" }], attributes = {} },
+                                systemMessage = SystemMessage { text = "你是文档问答助手，只能根据检索到的文档内容回答问题，不要编造文档中没有的信息。
+                                                                        如果文档中没有答案，请回答“对不起，我无法找到相关答案。”
+                                                                        如果答案来自文档，请在答案末尾另起一行添加引用，格式必须为：[来源: 完整文件名]。
+                                                                        来源必须使用检索上下文中的完整文件名，保留所有文字和后缀，不要缩写为文档标题，如：xxx.pdf。"
+                                                               },
+                                chatMemory = [],
+                                invocationContext = DefaultInvocationContext{
+                                    invocationId=13d82b15-3e4d-44d6-9641-77fcadaac472,
+                                    interfaceName='com.lulala.langchain4j.rag.easyrag.service.EasyRagAssistant',
+                                    methodName='chat',
+                                    methodArguments=[用户请求的问题xxx],
+                                    userMessage=null,
+                                    chatMemoryId=default,
+                                    invocationParameters=InvocationParameters{map={}},
+                                    managedParameters=null,
+                                    timestamp=2026-08-26T09:12:22.470354900Z
+                                }
+                            }
+                        }
+                     */
+                    log.info("contentRetriever4Embedding dynamicMaxResults query: {}", query);
+                    return 5;
+                })
+                .minScore(0.75)
+                // minScore 也可以根据查询动态指定
+                .dynamicMinScore(query -> {
+                    /*
+                        和 dynamicMaxResults 的 Query 相同
+                        contentRetriever4Embedding dynamicMinScore query: Query {
+                            text = "用户的问题是：用户请求的问题xxx"",
+                            metadata = Metadata {
+                                chatMessage = UserMessage { name = null, contents = [TextContent { text = "用户的问题是：用户请求的问题xxx}], attributes = {} },
+                                systemMessage = SystemMessage { text = "你是文档问答助手，只能根据检索到的文档内容回答问题，不要编造文档中没有的信息。
+                                                                        如果文档中没有答案，请回答“对不起，我无法找到相关答案。”
+                                                                        如果答案来自文档，请在答案末尾另起一行添加引用，格式必须为：[来源: 完整文件名]。
+                                                                        来源必须使用检索上下文中的完整文件名，保留所有文字和后缀，不要缩写为文档标题，如：xxx.pdf。" },
+                                chatMemory = [],
+                                invocationContext = DefaultInvocationContext{
+                                    invocationId=13d82b15-3e4d-44d6-9641-77fcadaac472,
+                                    interfaceName='com.lulala.langchain4j.rag.easyrag.service.EasyRagAssistant',
+                                    methodName='chat',
+                                    methodArguments=[用户请求的问题xxx],
+                                    userMessage=null,
+                                    chatMemoryId=default,
+                                    invocationParameters=InvocationParameters{map={}},
+                                    managedParameters=null,
+                                    timestamp=2026-08-26T09:12:22.470354900Z
+                                }
+                            }
+                        }
+                     */
+                    log.info("contentRetriever4Embedding dynamicMinScore query: {}", query);
+                    return 0.75;
+                })
+                .filter(metadataKey("userId").isEqualTo(OtherInfo.DEFAULT_USER_ID))
+                // filter 也可以根据查询动态指定
+                .dynamicFilter(query -> {
+                    String userId = getUserId(query.metadata().chatMemoryId());
+                    return metadataKey("userId").isEqualTo(userId);
+                })
+                .build();
+    }
+
+    private String getUserId(Object chatMemoryId) {
+        // Demo 中入库时固定写入 userId=123456；真实业务可根据 chatMemoryId 查询当前登录用户。
+        return OtherInfo.DEFAULT_USER_ID;
     }
 
 }
