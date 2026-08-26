@@ -6,7 +6,10 @@ import dev.langchain4j.community.data.document.graph.GraphNode;
 import dev.langchain4j.community.data.document.transformer.graph.GraphTransformer;
 import dev.langchain4j.community.data.document.transformer.graph.LLMGraphTransformer;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +28,17 @@ import java.util.Set;
 public class RagApiController {
 
     @Autowired
+    EmbeddingModel embeddingModel;
+
+    @Autowired
     private ChatModel deepseekChatModel;
 
     @RequestMapping("/graphTransformer")
     public String graphTransformer() {
         GraphTransformer graphTransformer = LLMGraphTransformer.builder()
                 .model(deepseekChatModel)
+                // 当前版本构造器要求 examples 非空；不使用 few-shot 示例时传空字符串。
+                .examples("")
                 .additionalInstructions("只抽取文本中明确出现的信息，不要推断。")
                 .maxAttempts(3)
                 .build();
@@ -49,5 +57,13 @@ public class RagApiController {
         log.info(stringBuilder.toString());
 
         return stringBuilder.toString();
+    }
+
+    @RequestMapping("/embedding")
+    public String embedding() {
+        InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
+
+
+        return "embedding";
     }
 }

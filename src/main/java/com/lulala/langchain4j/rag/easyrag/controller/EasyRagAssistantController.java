@@ -2,23 +2,23 @@ package com.lulala.langchain4j.rag.easyrag.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.lulala.langchain4j.openai.constant.LangChain4JConstants;
+import com.lulala.langchain4j.rag.easyrag.config.EasyRagConfig;
 import com.lulala.langchain4j.rag.easyrag.service.EasyRagAssistant;
 import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
-import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.service.AiServices;
-import dev.langchain4j.store.embedding.EmbeddingStore;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -28,40 +28,47 @@ import java.util.regex.Matcher;
  * @version 1.0
  * @since 2026/8/25 14:32
  */
+@Slf4j
 @RestController
 @RequestMapping("/rag/assistant")
 public class EasyRagAssistantController {
 
-    private final EasyRagAssistant assistant;
-    private final ContentRetriever contentRetriever;
+    private final EasyRagAssistant assistant4EasyRag;
+    private final ContentRetriever contentRetriever4EasyRag;
+
+    private final EasyRagAssistant assistant4Transformer;
+    private final ContentRetriever contentRetriever4Transformer;
 
     public EasyRagAssistantController(@Qualifier(LangChain4JConstants.ChatModel.DEEPSEEK_CHAT_MODEL) ChatModel deepseekChatModel,
-                                      EmbeddingStore<TextSegment> embeddingStore,
-                                      EmbeddingModel embeddingModel) {
-        this.contentRetriever = EmbeddingStoreContentRetriever.builder()
-                .embeddingStore(embeddingStore)
-                .embeddingModel(embeddingModel)
-                .maxResults(5)
-                .minScore(0.25)
-                .build();
-
-        // 助手是无状态单例；聊天记忆需要按用户或会话隔离，不能放在全局控制器中共享。
-        this.assistant = AiServices.builder(EasyRagAssistant.class)
+                                      @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_EASY_RAG) ContentRetriever contentRetriever4EasyRag,
+                                      @Qualifier(EasyRagConfig.BeanName.CONTENT_RETRIEVER_4_TRANSFORMER) ContentRetriever contentRetriever4Transformer) {
+        this.contentRetriever4EasyRag = contentRetriever4EasyRag;
+        this.assistant4EasyRag = AiServices.builder(EasyRagAssistant.class)
                 .chatModel(deepseekChatModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
-                .contentRetriever(contentRetriever)
+                .contentRetriever(contentRetriever4EasyRag)
+                .build();
+
+        this.contentRetriever4Transformer = contentRetriever4Transformer;
+        this.assistant4Transformer = AiServices.builder(EasyRagAssistant.class)
+                .chatModel(deepseekChatModel)
+                .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+                .contentRetriever(contentRetriever4Transformer)
                 .build();
     }
 
-    @GetMapping("/chat")
-    public String chat(@RequestParam("message") String message) {
-        String answer = assistant.chat(message);
-        String sourceFileName = resolveSourceFileName(message);
+    @GetMapping("/chat4EasyRag")
+    public String chat4EasyRag(@RequestParam("message") String message) {
+        String answer = assistant4EasyRag.chat(message);
+        String sourceFileName = resolveSourceFileName4EasyRag(message);
         return normalizeSource(answer, sourceFileName);
     }
 
-    private String resolveSourceFileName(String message) {
-        return contentRetriever.retrieve(new Query(message)).stream()
+    private String resolveSourceFileName4EasyRag(String message) {
+        List<Content> contentList = contentRetriever4EasyRag.retrieve(new Query(message));
+        // resolveSourceFileName4EasyRag contentList: [DefaultContent { textSegment = TextSegment { text = "拆分后的文本内容" metadata = {absolute_directory_path=C:\systemEnv\xxx\1, index=1, file_name=xxx.pdf} }, metadata = {SCORE=0.8564665629710392, EMBEDDING_ID=f6778b9a-ec6f-45cb-bc5e-b91b182b36ea} }]
+        //log.info("resolveSourceFileName4EasyRag contentList: {}", contentList);
+        return contentList.stream()
                 .map(content -> content.textSegment().metadata().getString(Document.FILE_NAME))
                 .filter(StrUtil::isNotBlank)
                 .findFirst()
@@ -80,4 +87,24 @@ public class EasyRagAssistantController {
         }
         return answer + System.lineSeparator() + citation;
     }
+
+    @GetMapping("/chat4Transformer")
+    public String chat4Transformer(@RequestParam("message") String message) {
+//        String answer = assistant4Transformer.chat(message);
+//        String sourceFileName = resolveSourceFileName4Transformer(message);
+//        return normalizeSource(answer, sourceFileName);
+
+        // contentRetriever4Transformer 已经将文件名放到每段 TextSegment 中，会返回完整的文件名，所以这里不需要再处理文件名
+        return assistant4Transformer.chat(message);
+    }
+
+//    private String resolveSourceFileName4Transformer(String message) {
+//        List<Content> contentList = contentRetriever4Transformer.retrieve(new Query(message));
+//        log.info("resolveSourceFileName4Transformer contentList: {}", contentList);
+//        return contentList.stream()
+//                .map(content -> content.textSegment().metadata().getString(Document.FILE_NAME))
+//                .filter(StrUtil::isNotBlank)
+//                .findFirst()
+//                .orElse(null);
+//    }
 }
