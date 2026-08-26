@@ -2,7 +2,7 @@ package com.lulala.langchain4j.rag.easyrag.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.lulala.langchain4j.openai.constant.LangChain4JConstants;
-import com.lulala.langchain4j.rag.easyrag.service.Assistant;
+import com.lulala.langchain4j.rag.easyrag.service.EasyRagAssistant;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -30,14 +30,14 @@ import java.util.regex.Matcher;
  */
 @RestController
 @RequestMapping("/rag/assistant")
-public class Assistant03Controller {
+public class EasyRagAssistantController {
 
-    private final Assistant assistant;
+    private final EasyRagAssistant assistant;
     private final ContentRetriever contentRetriever;
 
-    public Assistant03Controller(@Qualifier(LangChain4JConstants.ChatModel.DEEPSEEK_CHAT_MODEL) ChatModel deepseekChatModel,
-                                 EmbeddingStore<TextSegment> embeddingStore,
-                                 EmbeddingModel embeddingModel) {
+    public EasyRagAssistantController(@Qualifier(LangChain4JConstants.ChatModel.DEEPSEEK_CHAT_MODEL) ChatModel deepseekChatModel,
+                                      EmbeddingStore<TextSegment> embeddingStore,
+                                      EmbeddingModel embeddingModel) {
         this.contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
@@ -46,7 +46,7 @@ public class Assistant03Controller {
                 .build();
 
         // 助手是无状态单例；聊天记忆需要按用户或会话隔离，不能放在全局控制器中共享。
-        this.assistant = AiServices.builder(Assistant.class)
+        this.assistant = AiServices.builder(EasyRagAssistant.class)
                 .chatModel(deepseekChatModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
                 .contentRetriever(contentRetriever)

@@ -9,7 +9,7 @@ import dev.langchain4j.service.V;
  * @version 1.0
  * @since 2026/8/25 13:57
  */
-public interface Assistant {
+public interface EasyRagAssistant {
 
     @SystemMessage("""
             你是文档问答助手，只能根据检索到的文档内容回答问题，不要编造文档中没有的信息。
