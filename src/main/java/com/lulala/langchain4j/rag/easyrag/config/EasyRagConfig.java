@@ -2,6 +2,7 @@ package com.lulala.langchain4j.rag.easyrag.config;
 
 import cn.hutool.core.util.StrUtil;
 import com.knuddels.jtokkit.api.ModelType;
+import com.lulala.langchain4j.common.Constants;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
@@ -12,10 +13,13 @@ import dev.langchain4j.model.embedding.onnx.bgesmallzhv15.BgeSmallZhV15Embedding
 import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.rag.content.retriever.WebSearchContentRetriever;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.IngestionResult;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
+import dev.langchain4j.web.search.WebSearchEngine;
+import dev.langchain4j.web.search.tavily.TavilyWebSearchEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
+import java.time.Duration;
 import java.util.List;
 
 import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
@@ -47,6 +52,8 @@ public class EasyRagConfig {
         public static final String CONTENT_RETRIEVER_4_TRANSFORMER = "contentRetriever4Transformer";
 
         public static final String CONTENT_RETRIEVER_4_EMBEDDING = "contentRetriever4Embedding";
+
+        public static final String CONTENT_RETRIEVER_4_WEB = "contentRetriever4Web";
     }
 
     public static final class OtherInfo {
@@ -73,8 +80,8 @@ public class EasyRagConfig {
 //                .toLowerCase(Locale.ROOT)
 //                .endsWith(".pdf");
 
-        // 加了环境变量后，IDEA 工具要完全重启才能取到环境变量的值
-        String directoryPath = System.getenv("LANGCHAIN4J_DEMO_DOC_PATH");
+        // 加了环境变量后，IDEA 工具要完全重启才能取到环境变量的值 =
+        String directoryPath = System.getenv(Constants.SystemEnv.LANGCHAIN4J_DEMO_DOC_PATH);
         if (StrUtil.isBlank(directoryPath)) {
             throw new IllegalStateException("环境变量 LANGCHAIN4J_DEMO_DOC_PATH 未配置");
         }
@@ -112,7 +119,7 @@ public class EasyRagConfig {
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:{*.pdf,**/*.pdf}");
 
         // 加了环境变量后，IDEA 工具要完全重启才能取到环境变量的值
-        String directoryPath = System.getenv("LANGCHAIN4J_DEMO_DOC_PATH");
+        String directoryPath = System.getenv(Constants.SystemEnv.LANGCHAIN4J_DEMO_DOC_PATH);
         if (StrUtil.isBlank(directoryPath)) {
             throw new IllegalStateException("环境变量 LANGCHAIN4J_DEMO_DOC_PATH 未配置");
         }
@@ -283,6 +290,19 @@ public class EasyRagConfig {
     private String getUserId(Object chatMemoryId) {
         // Demo 中入库时固定写入 userId=123456；真实业务可根据 chatMemoryId 查询当前登录用户。
         return OtherInfo.DEFAULT_USER_ID;
+    }
+
+    @Bean(BeanName.CONTENT_RETRIEVER_4_WEB)
+    ContentRetriever contentRetriever4Web() {
+        WebSearchEngine webSearchEngine = TavilyWebSearchEngine.builder()
+                .apiKey(System.getenv(Constants.SystemEnv.LANGCHAIN4J_TAVILY_API_KEY))
+                // Tavily 属于外部网络请求，默认超时偏短时容易在检索场景下失败。
+                .timeout(Duration.ofSeconds(60))
+                .build();
+        return WebSearchContentRetriever.builder()
+                .webSearchEngine(webSearchEngine)
+                .maxResults(3)
+                .build();
     }
 
 }

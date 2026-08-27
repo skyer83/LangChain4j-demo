@@ -81,9 +81,16 @@
             <artifactId>langchain4j-embeddings-bge-small-zh-v15</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
+        <!-- Graph Transformer -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-community-llm-graph-transformer</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+        <!-- 网络搜索内容检索器（Web Search Content Retriever）: tavily -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-web-search-engine-tavily</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
 
