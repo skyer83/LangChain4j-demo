@@ -28,6 +28,7 @@ import java.util.List;
 import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
 
 /**
+ * 示例：https://github.com/langchain4j/langchain4j-examples/tree/main/rag-examples
  * @author shenjh
  * @version 1.0
  * @since 2026/8/25 11:32
