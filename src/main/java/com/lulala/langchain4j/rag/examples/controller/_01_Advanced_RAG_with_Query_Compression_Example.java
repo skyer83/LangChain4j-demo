@@ -76,6 +76,26 @@ public class _01_Advanced_RAG_with_Query_Compression_Example {
         // 现在，查看日志：
         // 由于没有先前的上下文，第一个查询没有被压缩。
         // 然而，第二个查询被压缩成了类似“When was John Doe born?”（约翰·多伊什么时候出生的？）这样的独立问题。
+        /*
+            第二次请求内容会组装为：
+                Read and understand the conversation between the User and the AI. Then, analyze the new query from the User.
+                Identify all relevant details, terms, and context from both the conversation and the new query.
+                Reformulate this query into a clear, concise, and self-contained format suitable for information retrieval.
+                （中文：请阅读并理解用户与 AI 之间的对话。然后，分析用户的新查询。从对话和新查询中识别出所有相关的细节、术语和上下文。将该查询重新表述为清晰、简洁且自包含的格式，以便于信息检索。）
+
+                Conversation:
+                User: 约翰·多伊的深远影响是什么？
+
+                Answer using the following information:
+                慈善事业与个人生活xxx...
+
+                AI: 约翰·多伊的深远影响在于他留下了多维度的遗产：他既是开拓性的工程师xxx...
+
+                User query: 他什么时候出生的？
+
+                It is very important that you provide only reformulated query and nothing else! Do not prepend a query with anything!
+                （中文：请务必仅提供改写后的查询，不要包含任何其他内容！不要在查询前添加任何前缀！）
+         */
         return ragExampleAssisant.answer(query);
     }
 
