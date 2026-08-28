@@ -46,7 +46,7 @@ public class Easy_RAG_Example {
         String relativePath = "rag-examples/documents";
         List<Document> documents = FileSystemDocumentLoader.loadDocuments(RagUtils.toPath(relativePath), RagUtils.glob("*.txt"));
 
-        RagExampleAssistant ragExampleAssisant = AiServices.builder(RagExampleAssistant.class)
+        RagExampleAssistant ragExampleAssistant = AiServices.builder(RagExampleAssistant.class)
                 .chatModel(deepseekChatModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
                 .contentRetriever(createContentRetriever(documents))
@@ -54,7 +54,7 @@ public class Easy_RAG_Example {
         // 我们可以提出如下问题：
         // - 我可以取消预订吗？
         // - 我出了事故，需要额外付费吗？
-        return ragExampleAssisant.answer(query);
+        return ragExampleAssistant.answer(query);
     }
 
     private ContentRetriever createContentRetriever(List<Document> documents) {

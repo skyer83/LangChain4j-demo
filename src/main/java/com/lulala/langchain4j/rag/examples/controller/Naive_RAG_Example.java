@@ -55,14 +55,14 @@ public class Naive_RAG_Example {
     @RequestMapping("/chat")
     public String chat(@RequestParam String query) {
         String relativePath = "rag-examples/documents/miles-of-smiles-terms-of-use.txt";
-        RagExampleAssistant ragExampleAssisant = createAssisant(relativePath);
+        RagExampleAssistant ragExampleAssisant = createAssistant(relativePath);
         // 我们可以提出如下问题：
         // - 我可以取消预订吗？
         // - 我出了事故，需要额外付费吗？
         return ragExampleAssisant.answer(query);
     }
 
-    private RagExampleAssistant createAssisant(String documentPath) {
+    private RagExampleAssistant createAssistant(String documentPath) {
         // 现在，让我们加载一个用于 RAG 的文档。
         // 我们将使用一家虚构的租车公司“Miles of Smiles”的使用条款。
         // 在本示例中，我们仅导入单个文档，但您可以根据需要加载任意数量的文档。
