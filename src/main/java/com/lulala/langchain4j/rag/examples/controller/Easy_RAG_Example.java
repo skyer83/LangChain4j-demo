@@ -1,6 +1,6 @@
 package com.lulala.langchain4j.rag.examples.controller;
 
-import com.lulala.langchain4j.rag.examples.service.RagExampleAssisant;
+import com.lulala.langchain4j.rag.examples.service.RagExampleAssistant;
 import com.lulala.langchain4j.rag.utils.RagUtils;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
+ * 参见：https://github.com/langchain4j/langchain4j-examples/blob/main/rag-examples/src/main/java/_1_easy/Easy_RAG_Example.java
  * 本示例演示了如何实现一个“简易 RAG”（检索增强生成）应用。
  * 所谓“简易”，是指我们无需深入探讨解析、切分、嵌入等所有细节。
  * 所有的“魔法”都封装在 “langchain4j-easy-rag” 模块中。
@@ -32,12 +33,11 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/rag/examples")
+@RequestMapping("/rag/easyRagExample")
 public class Easy_RAG_Example {
 
     @Autowired
     private EmbeddingModel embeddingModelOfZhV15;
-
     @Autowired
     private ChatModel deepseekChatModel;
 
@@ -46,10 +46,10 @@ public class Easy_RAG_Example {
         String relativePath = "rag-examples/documents";
         List<Document> documents = FileSystemDocumentLoader.loadDocuments(RagUtils.toPath(relativePath), RagUtils.glob("*.txt"));
 
-        RagExampleAssisant ragExampleAssisant = AiServices.builder(RagExampleAssisant.class)
+        RagExampleAssistant ragExampleAssisant = AiServices.builder(RagExampleAssistant.class)
                 .chatModel(deepseekChatModel)
                 .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
-                .contentRetriever(createContentRetriever(documents, embeddingModelOfZhV15))
+                .contentRetriever(createContentRetriever(documents))
                 .build();
         // 我们可以提出如下问题：
         // - 我可以取消预订吗？
@@ -57,17 +57,17 @@ public class Easy_RAG_Example {
         return ragExampleAssisant.answer(query);
     }
 
-    private static ContentRetriever createContentRetriever(List<Document> documents, EmbeddingModel embeddingModel) {
+    private ContentRetriever createContentRetriever(List<Document> documents) {
         InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
 
         EmbeddingStoreIngestor.builder()
-                .embeddingModel(embeddingModel)
+                .embeddingModel(embeddingModelOfZhV15)
                 .embeddingStore(embeddingStore)
                 .build()
                 .ingest(documents);
 
         return EmbeddingStoreContentRetriever.builder()
-                .embeddingModel(embeddingModel)
+                .embeddingModel(embeddingModelOfZhV15)
                 .embeddingStore(embeddingStore)
                 .build();
     }
