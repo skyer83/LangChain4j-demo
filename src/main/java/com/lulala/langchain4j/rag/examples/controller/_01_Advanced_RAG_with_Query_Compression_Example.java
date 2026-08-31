@@ -63,10 +63,10 @@ public class _01_Advanced_RAG_with_Query_Compression_Example {
 
     @RequestMapping("/chat")
     public String chat(@RequestParam String query) {
-        String relativePath = "rag-examples/documents/biography-of-john-doe.txt";
         if (ragExampleAssisant == null) {
             synchronized (this) {
                 if (ragExampleAssisant == null) {
+                    String relativePath = "rag-examples/documents/biography-of-john-doe.txt";
                     ragExampleAssisant = createAssistant(relativePath);
                 }
             }
