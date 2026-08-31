@@ -295,6 +295,7 @@ public class EasyRagConfig {
     @Bean(BeanName.CONTENT_RETRIEVER_4_WEB)
     ContentRetriever contentRetriever4Web() {
         WebSearchEngine webSearchEngine = TavilyWebSearchEngine.builder()
+                // get a free key: https://app.tavily.com/sign-in
                 .apiKey(System.getenv(Constants.SystemEnv.LANGCHAIN4J_TAVILY_API_KEY))
                 // Tavily 属于外部网络请求，默认超时偏短时容易在检索场景下失败。
                 .timeout(Duration.ofSeconds(60))

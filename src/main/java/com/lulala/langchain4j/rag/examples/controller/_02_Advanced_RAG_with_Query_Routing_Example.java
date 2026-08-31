@@ -85,6 +85,23 @@ public class _02_Advanced_RAG_with_Query_Routing_Example {
         // 首先，提问“What is the legacy of John Doe?”（约翰·多伊的深远影响是什么？）
         // 然后，提问“Can I cancel my reservation?”（我可以取消预订吗？）
         // 现在，查看日志，观察这些查询是如何被路由到不同的检索器（retrievers）的。
+        /*
+            请求路由时，会拼接为：
+            Based on the user query, determine the most suitable data source(s) to retrieve relevant information from the following options:
+            （中文：根据用户的查询，从以下选项中确定最适合用于检索相关信息的数据源：）
+            1: Miles of Smiles 的使用条款
+            2: 约翰·多伊的传记
+            It is very important that your answer consists of either a single number or multiple numbers separated by commas and nothing else!
+            （中文：请务必确保你的回答仅包含单个数字，或由逗号分隔的多个数字，不要包含任何其他内容！）
+            User query: 我可以取消预订吗？
+
+            请求路由时，AI响应为（部分摘取）：
+            {
+                "role": "assistant",
+                "content": "1",
+                "reasoning_content": "We need answer only number(s). Need determine suitable data source(s) based query Chinese: \"我可以取消预订吗？\" Means \"Can I cancel a reservation/booking?\" Options: 1: Miles of Smiles 的使用条款 (Terms of use for Miles of Smiles) 2: 约翰·多伊的传记 (Biography of John Doe). Need choose relevant. Cancellation likely terms of use. So answer 1. Need only single number."
+            }
+         */
         return ragExampleAssisant.answer(query);
     }
 
