@@ -58,9 +58,12 @@ import java.util.List;
 @RequestMapping("/rag/advancedRagWithReRankingExample")
 public class _03_Advanced_RAG_with_ReRanking_Example {
 
+    // 重排序分数阈值
     private static final double MIN_RERANK_SCORE = 0.7;
+    // 粗排最大结果数
     private static final int COARSE_RETRIEVAL_MAX_RESULTS = 5;
-    private static final int MAX_RERANK_RESULTS = 5;
+    // 重排序（精排）最大结果数
+    private static final int MAX_RERANK_RESULTS = 3;
     private static final int LOG_TEXT_MAX_LENGTH = 120;
 
     @Autowired

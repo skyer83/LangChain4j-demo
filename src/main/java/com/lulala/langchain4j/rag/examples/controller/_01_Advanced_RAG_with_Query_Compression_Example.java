@@ -111,17 +111,17 @@ public class _01_Advanced_RAG_with_Query_Compression_Example {
                 .build();
         ingestor.ingest(document);
 
-        // 我们将创建一个 CompressingQueryTransformer（压缩查询转换器），
-        // 它负责将用户的查询和先前的对话压缩为一个单一的、独立的查询。
-        // 这应当能显著提升检索过程的质量。
-        QueryTransformer queryTransformer = new CompressingQueryTransformer(deepseekChatModel);
-
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModelOfZhV15)
                 .maxResults(2)
                 .minScore(0.6)
                 .build();
+
+        // 我们将创建一个 CompressingQueryTransformer（压缩查询转换器），
+        // 它负责将用户的查询和先前的对话压缩为一个单一的、独立的查询。
+        // 这应当能显著提升检索过程的质量。
+        QueryTransformer queryTransformer = new CompressingQueryTransformer(deepseekChatModel);
 
         // RetrievalAugmentor（检索增强器）是 LangChain4j 中 RAG 流程的入口。
         // 可以对其进行配置，以根据您的具体需求自定义 RAG 行为。
