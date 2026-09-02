@@ -158,6 +158,25 @@ public class _07_Advanced_RAG_Multiple_Retrievers_Example {
         // 我们来创建一个查询路由器，它会将每个查询同时路由给两个检索器。
         QueryRouter queryRouter = new DefaultQueryRouter(contentRetriever01, contentRetriever02);
 
+        // _02_Advanced_RAG_with_Query_Routing_Example 与 _07_Advanced_RAG_Multiple_Retrievers_Example 路由区别
+        /*
+            两个类都用了两个 ContentRetriever，但路由策略完全不同：_02 是让 LLM 选择检索器，_07 是默认广播到所有检索器。
+            _02：智能路由，先判断再检索。
+                它会先让 LLM 根据问题和检索器描述做选择，
+                所以用户问“约翰·多伊是谁？”时，理论上只查传记库；
+                问“我可以取消预订吗？”时，理论上只查使用条款库。
+                特点：更智能、更省检索成本，但会多一次 LLM 调用，并且路由结果依赖模型判断。
+            _07：多检索器广播，全部都检索。
+                它不会判断问题属于哪个知识库，而是每次都把同一个查询发给所有 ContentRetriever。
+                也就是说，无论用户问“约翰·多伊是谁？”还是“我可以取消预订吗？”，两个检索器都会被查询，然后结果一起进入后续聚合流程。
+                特点：简单、稳定、无额外 LLM 路由调用，但容易混入无关文档片段。
+            总结：
+                _02 是“按问题选择合适的检索器”；
+                _07 是“所有检索器都查一遍”。
+                如果你的知识库主题差异明显，用 _02 更合适；
+                如果多个检索器都可能提供补充信息，用 _07 更直接。
+         */
+
         RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                 .queryRouter(queryRouter)
                 .build();
