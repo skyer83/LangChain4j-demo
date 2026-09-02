@@ -45,10 +45,18 @@ public class _09_Advanced_RAG_Return_Sources_Example {
     @Autowired
     private ChatModel deepseekChatModel;
 
+    private RagExampleAssistant ragExampleAssisant;
+
     @RequestMapping("/chat")
     public String chat(@RequestParam String query) {
-        String relativePath = "rag-examples/documents/miles-of-smiles-terms-of-use.txt";
-        RagExampleAssistant ragExampleAssisant = createAssistant(relativePath);
+        if (ragExampleAssisant == null) {
+            synchronized (this) {
+                if (ragExampleAssisant == null) {
+                    String relativePath = "rag-examples/documents/miles-of-smiles-terms-of-use.txt";
+                    ragExampleAssisant = createAssistant(relativePath);
+                }
+            }
+        }
         // 我们可以提出如下问题：
         // - 我可以取消预订吗？
         Result<String> result = ragExampleAssisant.answer02(query);

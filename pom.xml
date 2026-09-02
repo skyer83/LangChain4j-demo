@@ -122,6 +122,18 @@
             <artifactId>langchain4j-embedding-store-filter-parser-sql</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
+        <!-- _10_Advanced_RAG_SQL_Database_Retreiver_Example 示例用 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-experimental-sql</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
