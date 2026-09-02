@@ -116,6 +116,12 @@
             <!-- 1.14.1-beta24 版本没有 QwenScoringModel -->
             <version>1.17.0-beta27</version>
         </dependency>
+        <!-- _05_Advanced_RAG_with_Metadata_Filtering_Examples.llmGeneratedMetadataFilterExample 示例用 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-embedding-store-filter-parser-sql</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
