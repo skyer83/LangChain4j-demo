@@ -1,5 +1,8 @@
 package com.lulala.langchain4j.rag.utils;
 
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
+import dev.langchain4j.data.document.parser.TextDocumentParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
@@ -46,5 +49,9 @@ public class RagUtils {
             log.error("相对路径[{}]转换为Path异常", relativePath, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static Document loadDocument(String documentPath) {
+        return FileSystemDocumentLoader.loadDocument(toPath(documentPath), new TextDocumentParser());
     }
 }
