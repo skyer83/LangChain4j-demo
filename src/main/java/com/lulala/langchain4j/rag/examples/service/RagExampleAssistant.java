@@ -1,5 +1,7 @@
 package com.lulala.langchain4j.rag.examples.service;
 
+import dev.langchain4j.service.Result;
+
 /**
  * @author shenjh
  * @version 1.0
@@ -8,4 +10,6 @@ package com.lulala.langchain4j.rag.examples.service;
 public interface RagExampleAssistant {
 
     String answer(String query);
+
+    Result<String> answer02(String query);
 }
