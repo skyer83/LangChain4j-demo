@@ -7,7 +7,9 @@ import dev.langchain4j.model.chat.Capability;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
+import dev.langchain4j.model.moderation.ModerationModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiModerationModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,6 +87,29 @@ public class ChatModelConfiguration {
                 .listeners(chatModelListeners.orderedStream().toList())
                 .supportedCapabilities(Capability.RESPONSE_FORMAT_JSON_SCHEMA)
                 .strictJsonSchema(true)
+                .build();
+    }
+
+    /**
+     * 内容审核模型，供 MessageModeratorInputGuardrail 使用。（deepseek不支持：请求 https://api.deepseek.com/moderations ，报 404 Not Found）<br/>
+     * 目前调用 GPT 的代理 https://api.dwai.cloud/v1/moderations 也报 404，因此先不做内容审核的示例
+     * @param httpClientBuilder
+     * @param properties
+     * @return ModerationModel
+     * @author shenjh
+     * @since 2026/9/4 17:01
+     */
+    @Bean(LangChain4JConstants.ChatModel.GPT_MODERATION_MODEL)
+    ModerationModel gptModerationModel(
+            @Qualifier("openAiChatModelHttpClientBuilder") HttpClientBuilder httpClientBuilder,
+            GptChatModelProperties properties) {
+        return OpenAiModerationModel.builder()
+                .httpClientBuilder(httpClientBuilder)
+                .baseUrl(properties.getBaseUrl())
+                .apiKey(properties.getApiKey())
+                .modelName(properties.getModelName())
+                .logRequests(properties.getLogRequests())
+                .logResponses(properties.getLogResponses())
                 .build();
     }
 

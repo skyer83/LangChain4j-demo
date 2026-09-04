@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.boot3.version>3.5.14</spring.boot3.version>
-        <dev.langchain4j.spring>1.14.1-beta24</dev.langchain4j.spring>
+        <dev.langchain4j.spring>1.17.2-beta27</dev.langchain4j.spring>
     </properties>
 
     <dependencies>
@@ -126,6 +126,12 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-experimental-sql</artifactId>
+            <version>${dev.langchain4j.spring}</version>
+        </dependency>
+        <!-- Guardrails（护栏机制） -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-guardrails</artifactId>
             <version>${dev.langchain4j.spring}</version>
         </dependency>
 
